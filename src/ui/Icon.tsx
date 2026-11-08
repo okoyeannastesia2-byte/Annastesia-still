@@ -14,6 +14,9 @@ const P: Record<string, string> = {
   check: 'M5 12l5 5 9-10',
   left: 'M15 18l-6-6 6-6',
   right: 'M9 18l6-6-6-6',
+  sound: 'M9 18V6l10-2v12M9 18a3 3 0 11-6 0 3 3 0 016 0zM19 16a3 3 0 11-6 0 3 3 0 016 0z',
+  focus: 'M12 12m-3 0a3 3 0 106 0 3 3 0 10-6 0M3 12c2.5-4.5 5.5-7 9-7s6.5 2.5 9 7c-2.5 4.5-5.5 7-9 7s-6.5-2.5-9-7z',
+  leaf: 'M5 19c0-8 5-14 15-14 0 10-6 15-14 15M5 19l7-7',
 };
 
 export function Icon({ name, size = 22 }: { name: keyof typeof P | string; size?: number }) {

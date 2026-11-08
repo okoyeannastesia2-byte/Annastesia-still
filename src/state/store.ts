@@ -11,6 +11,9 @@ export interface Settings {
   theme: 'auto' | 'light' | 'dark';
   /** Allow a quick finger tap to fill even when the Apple Pencil is in use. */
   fingerFill: boolean;
+  /** ambient sound volume 0..1 and the sound last chosen (never auto-plays) */
+  volume: number;
+  lastSound: 'rain' | 'ocean' | 'lofi';
 }
 
 const EMPTY: Doc = { fills: {}, strokes: [] };
@@ -40,6 +43,9 @@ interface State {
   fitNonce: number;
   /** focus mode: hide everything but the canvas */
   focus: boolean;
+  /** ambient sound currently playing */
+  sound: 'off' | 'rain' | 'ocean' | 'lofi';
+  finish: () => void;
 
   openPage: (id: string) => Promise<void>;
   goGallery: () => void;
@@ -74,7 +80,8 @@ export const useStore = create<State>((set, get) => ({
   stayInside: true,
   paletteId: 'sunset',
   recents: [],
-  settings: { panelSide: 'right', theme: 'auto', fingerFill: true },
+  settings: { panelSide: 'right', theme: 'auto', fingerFill: true, volume: 0.5, lastSound: 'rain' },
+  sound: 'off',
   showInspiration: false,
   penSeen: false,
   fitNonce: 0,
@@ -90,7 +97,7 @@ export const useStore = create<State>((set, get) => ({
     saveMeta('lastPage', id);
   },
   goGallery() {
-    set({ screen: 'gallery' });
+    set({ screen: 'gallery', focus: false });
   },
   commit(next, before) {
     const { doc, past } = get();
@@ -126,6 +133,9 @@ export const useStore = create<State>((set, get) => ({
     const settings = { ...get().settings, ...p };
     set({ settings });
     saveMeta('settings', settings);
+  },
+  finish() {
+    set({ status: 'finished' });
   },
   addTime(ms) {
     set({ timeMs: get().timeMs + ms });

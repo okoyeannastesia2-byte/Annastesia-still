@@ -1,11 +1,12 @@
 import { useStore, savePrefs, type Tool } from '../state/store';
 import { Icon } from './Icon';
 
-export function Toolbar({ onExport, onSettings }: { onExport: () => void; onSettings: () => void }) {
+export function Toolbar({ onExport, onSettings, onSound }: { onExport: () => void; onSettings: () => void; onSound: () => void }) {
   const tool = useStore((s) => s.tool);
   const canUndo = useStore((s) => s.past.length > 0);
   const canRedo = useStore((s) => s.future.length > 0);
   const showInspiration = useStore((s) => s.showInspiration);
+  const sound = useStore((s) => s.sound);
   const st = useStore.getState;
 
   const pick = (t: Tool) => {
@@ -33,6 +34,8 @@ export function Toolbar({ onExport, onSettings }: { onExport: () => void; onSett
         <Btn name="fit" label="Fit" onClick={() => st().set({ fitNonce: st().fitNonce + 1 })} />
         <span className="tb-sep" />
         <Btn name="bulb" label="Idea" active={showInspiration} onClick={() => st().set({ showInspiration: !showInspiration })} />
+        <Btn name="sound" label="Sounds" active={sound !== 'off'} onClick={onSound} />
+        <Btn name="focus" label="Focus" onClick={() => st().set({ focus: true })} />
         <Btn name="export" label="Save" onClick={onExport} />
         <Btn name="settings" label="More" onClick={onSettings} />
       </div>

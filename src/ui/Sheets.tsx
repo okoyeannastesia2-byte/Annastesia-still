@@ -20,14 +20,18 @@ export function Sheet({ title, onClose, children }: { title: string; onClose: ()
   );
 }
 
-export function SettingsSheet({ onClose }: { onClose: () => void }) {
+export function SettingsSheet({ onClose, onFinish }: { onClose: () => void; onFinish: () => void }) {
   const settings = useStore((s) => s.settings);
   const setSettings = useStore((s) => s.setSettings);
   const penSeen = useStore((s) => s.penSeen);
   const [confirm, setConfirm] = useState(false);
+  const status = useStore((s) => s.status);
 
   return (
-    <Sheet title="Settings" onClose={onClose}>
+    <Sheet title="This page & settings" onClose={onClose}>
+      <button className="soft-btn primary wide" onClick={onFinish}>
+        {status === 'finished' ? 'Finished 🌿 — see note' : 'I’m finished with this page 🌿'}
+      </button>
       <div className="row">
         <span>Colour panel side</span>
         <div className="seg">

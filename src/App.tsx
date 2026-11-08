@@ -6,6 +6,7 @@ import { ColorPanel } from './ui/ColorPanel';
 import { Toolbar } from './ui/Toolbar';
 import { Gallery } from './ui/Gallery';
 import { ExportSheet, SettingsSheet } from './ui/Sheets';
+import { FinishedSheet, FocusDot, SoundSheet } from './ui/Calm';
 import { pageSVG, svgDataUrl, thumbnail } from './canvas/render';
 import { saveProgress } from './storage/db';
 
@@ -24,19 +25,31 @@ function ColoringScreen() {
   const loaded = useStore((s) => s.loaded);
   const side = useStore((s) => s.settings.panelSide);
   const showInspiration = useStore((s) => s.showInspiration);
-  const [sheet, setSheet] = useState<'settings' | 'export' | null>(null);
+  const focus = useStore((s) => s.focus);
+  const [sheet, setSheet] = useState<'settings' | 'export' | 'sound' | 'finished' | null>(null);
   const page = pageId ? PAGE_BY_ID[pageId] : null;
   if (!page) return null;
   return (
-    <div className={`color-screen panel-${side}`}>
-      <ColorPanel />
+    <div className={`color-screen panel-${side}${focus ? ' focus' : ''}`}>
+      {!focus && <ColorPanel />}
       <main className="stage">
         {loaded ? <ColoringCanvas key={page.id} page={page} /> : <div className="loading">Opening…</div>}
-        <Toolbar onExport={() => setSheet('export')} onSettings={() => setSheet('settings')} />
-        {showInspiration && <Inspiration pageId={page.id} />}
+        {!focus && <Toolbar onExport={() => setSheet('export')} onSettings={() => setSheet('settings')} onSound={() => setSheet('sound')} />}
+        {!focus && showInspiration && <Inspiration pageId={page.id} />}
+        {focus && <FocusDot />}
       </main>
-      {sheet === 'settings' && <SettingsSheet onClose={() => setSheet(null)} />}
+      {sheet === 'settings' && (
+        <SettingsSheet
+          onClose={() => setSheet(null)}
+          onFinish={() => {
+            useStore.getState().finish();
+            setSheet('finished');
+          }}
+        />
+      )}
       {sheet === 'export' && <ExportSheet onClose={() => setSheet(null)} />}
+      {sheet === 'sound' && <SoundSheet onClose={() => setSheet(null)} />}
+      {sheet === 'finished' && <FinishedSheet onClose={() => setSheet(null)} onExport={() => setSheet('export')} />}
     </div>
   );
 }
@@ -83,7 +96,7 @@ function useAutoSave() {
       if (!s.loaded || !prev.loaded || s.pageId !== prev.pageId) return;
       if (s.doc === prev.doc && s.status === prev.status && s.timeMs === prev.timeMs) return;
       // only start saving once something was actually coloured (or progress exists)
-      if (s.past.length === 0 && s.timeMs === 0 && s.doc === prev.doc) return;
+      if (s.past.length === 0 && s.timeMs === 0 && s.doc === prev.doc && s.status === prev.status) return;
       window.clearTimeout(timer.current);
       timer.current = window.setTimeout(flush, 700);
     });
