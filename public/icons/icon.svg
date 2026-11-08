@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" fill="#f6f1ea"/>
+  <g transform="translate(256 256)" stroke="#3b332c" stroke-width="7" stroke-linejoin="round">
+    <circle r="190" fill="#f3dccf"/>
+    <g fill="#f4845f">
+      <path id="p" d="M0 -40 C 42 -80 46 -140 0 -170 C -46 -140 -42 -80 0 -40Z"/>
+      <use href="#p" transform="rotate(60)"/><use href="#p" transform="rotate(120)"/>
+      <use href="#p" transform="rotate(180)"/><use href="#p" transform="rotate(240)"/><use href="#p" transform="rotate(300)"/>
+    </g>
+    <g fill="#f7b267">
+      <path id="q" d="M0 -40 C 30 -60 70 -70 90 -110 C 50 -100 20 -80 0 -40Z" transform="rotate(30)"/>
+    </g>
+    <circle r="40" fill="#6d597a"/>
+    <circle r="14" fill="#ffe29a"/>
+  </g>
+</svg>
