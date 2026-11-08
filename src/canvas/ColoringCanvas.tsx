@@ -407,11 +407,11 @@ const RegionItem = memo(function RegionItem({
   const hasStrokes = strokes.length > 0 || liveColor !== undefined;
   return (
     <>
-      <path data-region={region.id} d={region.d} fill={fill ?? PAPER} className="region" />
+      <path data-region={region.id} d={region.d} fill={fill ?? PAPER} fillRule="evenodd" className="region" />
       {hasStrokes && (
         <>
           <clipPath id={`c_${region.id}`}>
-            <path d={region.d} />
+            <path d={region.d} clipRule="evenodd" />
           </clipPath>
           <g clipPath={`url(#c_${region.id})`} pointerEvents="none">
             {strokes.map((s) => (
@@ -435,7 +435,20 @@ const Outlines = memo(function Outlines({ page }: { page: Page }) {
       {page.regions.map((r) => (
         <path key={r.id} d={r.d} />
       ))}
-      {page.decor?.map((d, i) => <path key={`d${i}`} d={d} />)}
+      {page.decor?.map((dec, i) => {
+        const { d, clip } = typeof dec === 'string' ? { d: dec, clip: undefined } : dec;
+        const reg = clip ? page.regions.find((r) => r.id === clip) : undefined;
+        return (
+          <g key={`d${i}`}>
+            {reg && (
+              <clipPath id={`dc${i}`}>
+                <path d={reg.d} clipRule="evenodd" />
+              </clipPath>
+            )}
+            <path d={d} strokeWidth={LINE_W * 0.7} clipPath={reg ? `url(#dc${i})` : undefined} />
+          </g>
+        );
+      })}
     </g>
   );
 });

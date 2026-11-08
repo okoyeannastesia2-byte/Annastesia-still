@@ -34,10 +34,14 @@ export interface Page {
   w: number;
   h: number;
   regions: Region[];
-  /** Extra outline-only details (never filled), e.g. veins, whiskers. Must sit inside a region. */
-  decor?: string[];
+  /** Extra outline-only details (never filled), e.g. veins, whiskers. Optionally clipped to a region. */
+  decor?: Decor[];
   /** Colours already applied the first time the page is opened ("started for me"). */
   preFill?: Record<string, string>;
   /** A suggested colouring shown as a small reference thumbnail. */
   inspiration: Record<string, string>;
+  /** drawn as overlapping layers and flattened (ahead of time) */
+  layered?: boolean;
 }
+
+export type Decor = string | { d: string; clip?: string };

@@ -100,8 +100,8 @@ export function sample(fn: (t: number) => Pt, n = 60): Edge {
   return poly(pts);
 }
 
-/** Polygon with softly rounded corners. */
-export function roundedPoly(pts: Pt[], radius: number): string {
+/** Polygon with softly rounded corners. A point may carry its own radius as a 3rd value. */
+export function roundedPoly(pts: (Pt | [number, number, number])[], radius: number): string {
   const n = pts.length;
   let d = '';
   for (let i = 0; i < n; i++) {
@@ -110,10 +110,11 @@ export function roundedPoly(pts: Pt[], radius: number): string {
     const b = pts[(i + 1) % n];
     const la = Math.hypot(a[0] - p[0], a[1] - p[1]);
     const lb = Math.hypot(b[0] - p[0], b[1] - p[1]);
-    const r = Math.min(radius, la * 0.42, lb * 0.42);
+    const want = p.length > 2 ? (p as number[])[2] : radius;
+    const r = Math.min(want, la * 0.48, lb * 0.48);
     const p1: Pt = [p[0] + ((a[0] - p[0]) / la) * r, p[1] + ((a[1] - p[1]) / la) * r];
     const p2: Pt = [p[0] + ((b[0] - p[0]) / lb) * r, p[1] + ((b[1] - p[1]) / lb) * r];
-    d += `${i === 0 ? 'M' : 'L'}${pt(p1)}Q${pt(p)} ${pt(p2)}`;
+    d += `${i === 0 ? 'M' : 'L'}${pt(p1)}Q${pt([p[0], p[1]])} ${pt(p2)}`;
   }
   return d + 'Z';
 }

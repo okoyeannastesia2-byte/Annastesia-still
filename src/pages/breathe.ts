@@ -1,56 +1,6 @@
 import type { Page, Region } from './types';
-import { arc, circle, closed, colorByGroup, line, petalRing, poly, rect, rev, roundedPoly, sample, sectorRing, type Pt } from './geometry';
-
-// ---- A tiny rounded block alphabet (100 units tall) ----
-type Glyph = { w: number; outer: Pt[]; holes?: Pt[][] };
-export const GLYPHS: Record<string, Glyph> = {
-  B: {
-    w: 70,
-    outer: [[0, 0], [48, 0], [64, 8], [68, 25], [60, 46], [70, 60], [70, 82], [58, 98], [48, 100], [0, 100]],
-    holes: [
-      [[22, 19], [42, 19], [46, 28], [42, 38], [22, 38]],
-      [[22, 58], [46, 58], [50, 69], [46, 81], [22, 81]],
-    ],
-  },
-  R: {
-    w: 70,
-    outer: [[0, 0], [46, 0], [66, 10], [70, 30], [64, 48], [52, 56], [70, 100], [46, 100], [32, 62], [22, 62], [22, 100], [0, 100]],
-    holes: [[[22, 19], [42, 19], [48, 30], [42, 42], [22, 42]]],
-  },
-  E: { w: 66, outer: [[0, 0], [66, 0], [66, 22], [22, 22], [22, 39], [56, 39], [56, 61], [22, 61], [22, 78], [66, 78], [66, 100], [0, 100]] },
-  A: {
-    w: 70,
-    outer: [[0, 100], [24, 0], [46, 0], [70, 100], [48, 100], [43, 80], [27, 80], [22, 100]],
-    holes: [[[27, 64], [43, 64], [35, 32]]],
-  },
-  T: { w: 70, outer: [[0, 0], [70, 0], [70, 22], [46, 22], [46, 100], [24, 100], [24, 22], [0, 22]] },
-  H: { w: 70, outer: [[0, 0], [22, 0], [22, 39], [48, 39], [48, 0], [70, 0], [70, 100], [48, 100], [48, 61], [22, 61], [22, 100], [0, 100]] },
-};
-
-export function lettering(word: string, x: number, y: number, scale: number, idPrefix = 'L', gap = 14): Region[] {
-  const out: Region[] = [];
-  let cursor = x;
-  [...word].forEach((ch, i) => {
-    const g = GLYPHS[ch];
-    if (!g) {
-      cursor += 40 * scale;
-      return;
-    }
-    const tf = (p: Pt): Pt => [cursor + p[0] * scale, y + p[1] * scale];
-    out.push({ id: `${idPrefix}${i}`, d: roundedPoly(g.outer.map(tf), 6 * scale), c: tf([g.w / 2, 50]), g: 'letter' });
-    g.holes?.forEach((h, j) => {
-      const pts = h.map(tf);
-      const c: Pt = [pts.reduce((s, p) => s + p[0], 0) / pts.length, pts.reduce((s, p) => s + p[1], 0) / pts.length];
-      out.push({ id: `${idPrefix}${i}h${j}`, d: roundedPoly(pts, 4 * scale), c, g: 'hole' });
-    });
-    cursor += (g.w + gap) * scale;
-  });
-  return out;
-}
-
-export function wordWidth(word: string, gap = 14) {
-  return [...word].reduce((s, ch, i) => s + (GLYPHS[ch]?.w ?? 40) + (i ? gap : 0), 0);
-}
+import { arc, circle, closed, colorByGroup, line, petalRing, poly, rect, rev, sample, sectorRing } from './geometry';
+import { lettering, wordWidth } from './letters';
 
 // ---- Page ----
 const sx = 500;

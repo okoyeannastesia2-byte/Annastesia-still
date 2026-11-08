@@ -5,7 +5,7 @@ import { loadAllProgress, type Progress } from '../storage/db';
 import { thumbnail } from '../canvas/render';
 import { useStore } from '../state/store';
 
-type Filter = 'all' | 'progress' | 'finished';
+type Filter = 'all' | 'started' | 'progress' | 'finished';
 
 export function Gallery() {
   const [progress, setProgress] = useState<Record<string, Progress>>({});
@@ -20,6 +20,7 @@ export function Gallery() {
     const pr = progress[p.id];
     if (filter === 'progress') return pr && pr.status === 'in-progress';
     if (filter === 'finished') return pr?.status === 'finished';
+    if (filter === 'started') return !!p.preFill && Object.keys(p.preFill).length > 0;
     return true;
   });
   const categories = [...new Set(shown.map((p) => p.category))];
@@ -29,12 +30,13 @@ export function Gallery() {
       <header className="gallery-head">
         <div>
           <h1>Still</h1>
-          <p className="sub">Pick a page. There's no rush.</p>
+          <p className="sub">{PAGES.length} pages to colour. Pick any one — there's no rush.</p>
         </div>
         <div className="seg big">
           {(
             [
               ['all', 'All pages'],
+              ['started', 'Started for you'],
               ['progress', 'In progress'],
               ['finished', 'Finished'],
             ] as const
@@ -76,7 +78,7 @@ function Card({ page, progress, onOpen }: { page: Page; progress?: Progress; onO
         <div className="card-title">{page.title}</div>
         <div className="card-sub">{DIFFICULTY_LABEL[page.difficulty]}</div>
         <div className="badges">
-          {page.preFill && !progress && <span className="badge warm">Started for you</span>}
+          {page.preFill && Object.keys(page.preFill).length > 0 && !progress && <span className="badge warm">Started for you</span>}
           {progress?.status === 'in-progress' && <span className="badge">In progress</span>}
           {progress?.status === 'finished' && <span className="badge green">Finished</span>}
         </div>
