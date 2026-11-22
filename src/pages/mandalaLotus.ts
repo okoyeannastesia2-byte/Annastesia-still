@@ -70,6 +70,7 @@ export const mandalaLotus: Page = {
   title: 'Sunset Lotus Mandala',
   category: 'Mandalas & geometric',
   difficulty: 'detailed',
+  symmetry: { cx, cy, n: 4 },
   w: 1000,
   h: 1000,
   regions,

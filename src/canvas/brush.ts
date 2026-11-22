@@ -1,5 +1,23 @@
 import { getStroke } from 'perfect-freehand';
 
+export type BrushKind = 'pencil' | 'marker' | 'watercolour' | 'crayon' | 'soft';
+
+export const BRUSHES: { id: BrushKind; name: string; hint: string }[] = [
+  { id: 'pencil', name: 'Pencil', hint: 'Soft coloured pencil with paper grain' },
+  { id: 'marker', name: 'Marker', hint: 'Smooth, even colour' },
+  { id: 'watercolour', name: 'Watercolour', hint: 'Light washes that build up' },
+  { id: 'crayon', name: 'Crayon', hint: 'Waxy and textured' },
+  { id: 'soft', name: 'Soft shade', hint: 'Airbrush for gentle shading' },
+];
+
+const SHAPE: Record<BrushKind, { mul: number; thinning: number }> = {
+  pencil: { mul: 1, thinning: 0.7 },
+  marker: { mul: 1, thinning: 0.35 },
+  watercolour: { mul: 1.35, thinning: 0.45 },
+  crayon: { mul: 1.1, thinning: 0.4 },
+  soft: { mul: 2, thinning: 0.2 },
+};
+
 export interface Stroke {
   id: string;
   color: string;
@@ -11,6 +29,8 @@ export interface Stroke {
   region?: string;
   /** true if real pressure was available (Apple Pencil) */
   pen: boolean;
+  /** brush type (older strokes have none: pencil or marker by opacity) */
+  kind?: BrushKind;
   /** pieces left over after erasing keep blunt ends */
   capStart?: boolean;
   capEnd?: boolean;
@@ -18,12 +38,16 @@ export interface Stroke {
 
 const cache = new WeakMap<Stroke, string>();
 
-export function strokeOutline(pts: number[], size: number, pen: boolean, last = true, capStart = false, capEnd = false): string {
+export const kindOf = (s: Stroke): BrushKind => s.kind ?? (s.opacity >= 1 ? 'marker' : 'pencil');
+
+export function strokeOutline(pts: number[], size: number, pen: boolean, last = true, capStart = false, capEnd = false, kind: BrushKind = 'pencil'): string {
+  const shape = SHAPE[kind];
+  size *= shape.mul;
   const input: [number, number, number][] = [];
   for (let i = 0; i < pts.length; i += 3) input.push([pts[i], pts[i + 1], pts[i + 2]]);
   const outline = getStroke(input, {
     size,
-    thinning: pen ? 0.7 : 0.35,
+    thinning: pen ? shape.thinning : Math.min(0.35, shape.thinning),
     smoothing: 0.55,
     streamline: 0.4,
     simulatePressure: !pen,
@@ -37,7 +61,7 @@ export function strokeOutline(pts: number[], size: number, pen: boolean, last = 
 export function strokePath(s: Stroke): string {
   let d = cache.get(s);
   if (d === undefined) {
-    d = strokeOutline(s.pts, s.size, s.pen, true, s.capStart, s.capEnd);
+    d = strokeOutline(s.pts, s.size, s.pen, true, s.capStart, s.capEnd, kindOf(s));
     cache.set(s, d);
   }
   return d;
@@ -63,9 +87,12 @@ function svgPathFromOutline(points: number[][]): string {
   return d + 'Z';
 }
 
-/** Average pressure → opacity, so a light touch gives a softer, paler stroke. */
-export function pencilOpacity(pts: number[], pen: boolean, marker: boolean): number {
-  if (marker) return 1;
+/** Opacity for a finished stroke: a light touch gives a softer, paler pencil line. */
+export function strokeOpacity(pts: number[], pen: boolean, kind: BrushKind): number {
+  if (kind === 'marker') return 0.92;
+  if (kind === 'watercolour') return 0.3;
+  if (kind === 'crayon') return 0.95;
+  if (kind === 'soft') return 0.5;
   if (!pen) return 0.85;
   let sum = 0;
   let n = 0;
@@ -75,6 +102,22 @@ export function pencilOpacity(pts: number[], pen: boolean, marker: boolean): num
   }
   const p = n ? sum / n : 0.5;
   return Math.min(0.95, 0.45 + p * 0.7);
+}
+
+/** SVG attributes that give each brush its look (shared by the canvas and exports). */
+export function strokeLook(s: { kind?: BrushKind; color: string; opacity: number }) {
+  const kind = s.kind ?? (s.opacity >= 1 ? 'marker' : 'pencil');
+  const a: Record<string, string | number> = { fill: s.color, 'fill-opacity': s.opacity };
+  if (kind === 'pencil') a.mask = 'url(#m_pencil)';
+  if (kind === 'crayon') a.mask = 'url(#m_crayon)';
+  if (kind === 'watercolour') {
+    a.mask = 'url(#m_wash)';
+    a.stroke = s.color;
+    a['stroke-opacity'] = 0.45;
+    a['stroke-width'] = 1.3;
+  }
+  if (kind === 'soft') a.filter = 'url(#f_soft)';
+  return a;
 }
 
 /**

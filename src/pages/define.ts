@@ -17,7 +17,7 @@ declare global {
   var __STILL_PRERENDER: boolean | undefined;
 }
 
-type Meta = Pick<Page, 'id' | 'title' | 'category' | 'difficulty'> & { w?: number; h?: number };
+type Meta = Pick<Page, 'id' | 'title' | 'category' | 'difficulty' | 'symmetry'> & { w?: number; h?: number };
 interface Built {
   layers: Layers;
   /** inspiration colours by group tag (an array cycles through the group) */

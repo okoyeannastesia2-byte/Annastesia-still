@@ -709,3 +709,281 @@ hr {
 .finished .row-btns {
   justify-content: center;
 }
+
+/* ---------- phase A: richer tools ---------- */
+.tool-options {
+  max-width: min(760px, calc(100vw - 340px));
+}
+.seg.brushes button {
+  padding: 7px 10px;
+}
+.fill-preview {
+  width: 34px;
+  height: 34px;
+  flex: none;
+  border-radius: 10px;
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.second-colour {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--muted);
+  cursor: pointer;
+}
+.second-colour span {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12);
+  order: 2;
+}
+.second-colour input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+}
+.pattern-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.pattern-chip {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  padding: 0;
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.pattern-chip svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.pattern-chip.on {
+  box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--accent);
+}
+.link-btn {
+  font-size: 14px;
+  color: var(--accent);
+  padding: 6px 4px;
+}
+.link-btn.danger {
+  color: #b5533c;
+}
+.brush-ring {
+  position: absolute;
+  left: 0;
+  top: 0;
+  border: 1.5px solid;
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.7);
+}
+.missed path {
+  fill: var(--accent);
+  animation: missedPulse 1.2s ease-in-out 3;
+  opacity: 0;
+}
+@keyframes missedPulse {
+  50% {
+    opacity: 0.45;
+  }
+}
+.current-dot {
+  position: relative;
+  cursor: pointer;
+}
+.current-dot input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+.swatch.add,
+.swatch.editing {
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+  background: var(--surface-2);
+}
+.swatch.editing {
+  color: #fff;
+}
+.harmonies {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.harmony-row {
+  display: flex;
+  gap: 8px;
+}
+.row-mini {
+  display: flex;
+  justify-content: space-between;
+}
+.panel-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 4px;
+}
+.panel-actions .soft-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+}
+
+/* ---------- gallery: versions, my art, albums ---------- */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 18px 0 4px;
+}
+.chip {
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--muted);
+  font-size: 14px;
+}
+.chip.on {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.chip.add {
+  background: none;
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.art-card {
+  display: flex;
+  flex-direction: column;
+}
+.card-open {
+  padding: 0;
+  display: block;
+}
+.card-actions {
+  display: flex;
+  gap: 4px;
+  margin-top: 6px;
+}
+.icon-mini {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+  background: var(--surface-2);
+}
+.icon-mini.fav {
+  color: #d1495b;
+}
+.icon-mini.fav svg path {
+  fill: currentColor;
+}
+.versions {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 12px;
+}
+.version {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--muted);
+  align-items: center;
+}
+.version img,
+.version .plus {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: var(--shadow);
+}
+.version .plus {
+  display: grid;
+  place-items: center;
+  background: var(--surface-2);
+  color: var(--accent);
+  box-shadow: none;
+}
+.art-details img {
+  width: 60%;
+  display: block;
+  margin: 0 auto 8px;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: var(--shadow);
+}
+.journal-view {
+  margin: 14px 0 6px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: var(--surface-2);
+  font-size: 15px;
+}
+.journal-view p {
+  margin: 4px 0 0;
+  font-family: var(--serif);
+}
+@media (max-width: 1000px) {
+  .tool-options {
+    max-width: calc(100vw - 260px);
+  }
+}
+/* compact, single-row tool options */
+.tool-options {
+  gap: 10px;
+  padding: 5px 10px;
+  font-size: 13px;
+}
+.tool-options .seg button {
+  padding: 6px 10px;
+  font-size: 13px;
+}
+.tool-options .toggle {
+  font-size: 13px;
+  gap: 6px;
+}
+.tool-options .toggle .knob {
+  width: 30px;
+  height: 18px;
+}
+.tool-options .toggle .knob::after {
+  width: 12px;
+  height: 12px;
+}
+.tool-options .toggle.on .knob::after {
+  transform: translateX(12px);
+}
+.tool-options input[type='range'] {
+  width: 110px;
+}
+.tool-options .link-btn {
+  font-size: 13px;
+}
+.pattern-chip,
+.fill-preview {
+  width: 30px;
+  height: 30px;
+}
+.tool-options {
+  max-width: none;
+}
+.color-panel > * {
+  flex-shrink: 0;
+}

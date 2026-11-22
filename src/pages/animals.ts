@@ -12,7 +12,7 @@ function flower5(L: Layers, x: number, y: number, r: number) {
 }
 
 // ---------------- Butterfly ----------------
-export const butterfly = layeredPage({ id: 'butterfly', title: 'Garden Butterfly', category: 'Animals', difficulty: 'medium' }, () => {
+export const butterfly = layeredPage({ id: 'butterfly', title: 'Garden Butterfly', category: 'Animals', difficulty: 'medium', symmetry: { cx: 500, cy: 500, n: 1, flip: true } }, () => {
   const L = new Layers();
   L.add('bg', rect(0, 0, 1000, 1000), [30, 30]);
   flower5(L, 130, 880, 80);
@@ -175,7 +175,7 @@ export const koiPond = layeredPage({ id: 'koi-pond', title: 'Koi Pond', category
 });
 
 // ---------------- Owl ----------------
-export const moonOwl = layeredPage({ id: 'moon-owl', title: 'Owl Under the Moon', category: 'Animals', difficulty: 'detailed' }, () => {
+export const moonOwl = layeredPage({ id: 'moon-owl', title: 'Owl Under the Moon', category: 'Animals', difficulty: 'detailed', symmetry: { cx: 500, cy: 500, n: 1, flip: true } }, () => {
   const L = new Layers();
   L.add('sky', rect(0, 0, 1000, 1000), [40, 40]);
   for (const [x, y, r] of [[90, 120, 22], [900, 90, 18], [140, 420, 14], [880, 400, 20], [80, 640, 16], [930, 650, 14]]) L.add('star', star(x, y, r, r * 0.45), [x, y]);

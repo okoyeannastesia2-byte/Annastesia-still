@@ -40,6 +40,8 @@ export interface Page {
   preFill?: Record<string, string>;
   /** A suggested colouring shown as a small reference thumbnail. */
   inspiration: Record<string, string>;
+  /** rotational (n copies) and/or left-right mirror symmetry, used by the mirror brush */
+  symmetry?: { cx: number; cy: number; n: number; flip?: boolean };
   /** drawn as overlapping layers and flattened (ahead of time) */
   layered?: boolean;
 }

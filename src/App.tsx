@@ -8,7 +8,7 @@ import { Gallery } from './ui/Gallery';
 import { ExportSheet, SettingsSheet } from './ui/Sheets';
 import { FinishedSheet, FocusDot, SoundSheet } from './ui/Calm';
 import { pageSVG, svgDataUrl, thumbnail } from './canvas/render';
-import { saveProgress } from './storage/db';
+import { saveArtwork } from './storage/db';
 
 export default function App() {
   const screen = useStore((s) => s.screen);
@@ -87,16 +87,20 @@ function useAutoSave() {
     const flush = () => {
       window.clearTimeout(timer.current);
       const s = useStore.getState();
-      if (!s.pageId || !s.loaded) return;
+      if (!s.pageId || !s.loaded || !s.art) return;
       const page = PAGE_BY_ID[s.pageId];
       if (thumbCache.current?.doc !== s.doc) thumbCache.current = { doc: s.doc, url: thumbnail(page, s.doc) };
-      saveProgress({ pageId: s.pageId, doc: s.doc, timeMs: s.timeMs, status: s.status, updatedAt: Date.now(), thumb: thumbCache.current.url });
+      const art = { ...s.art, doc: s.doc, timeMs: s.timeMs, status: s.status, log: s.log, updatedAt: Date.now(), thumb: thumbCache.current.url };
+      useStore.setState({ art });
+      saveArtwork(art);
     };
     const unsub = useStore.subscribe((s, prev) => {
-      if (!s.loaded || !prev.loaded || s.pageId !== prev.pageId) return;
-      if (s.doc === prev.doc && s.status === prev.status && s.timeMs === prev.timeMs) return;
+      if (!s.loaded || !prev.loaded || s.artworkId !== prev.artworkId) return;
+      if (s.doc === prev.doc && s.status === prev.status && s.timeMs === prev.timeMs && s.art === prev.art) return;
       // only start saving once something was actually coloured (or progress exists)
-      if (s.past.length === 0 && s.timeMs === 0 && s.doc === prev.doc && s.status === prev.status) return;
+      if (s.past.length === 0 && s.timeMs === 0 && s.doc === prev.doc && s.status === prev.status && s.art === prev.art) return;
+      // our own save writes `art` back; don't let that trigger another save
+      if (s.art !== prev.art && s.art?.updatedAt !== prev.art?.updatedAt && s.doc === prev.doc && s.timeMs === prev.timeMs && s.status === prev.status && s.art && prev.art && s.art.doc === s.doc) return;
       window.clearTimeout(timer.current);
       timer.current = window.setTimeout(flush, 700);
     });
