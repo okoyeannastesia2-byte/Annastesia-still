@@ -1,6 +1,5 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { useStore } from '../state/store';
-import { PAGE_BY_ID } from '../pages';
 import { renderPNG, shareFile, downloadFile } from '../canvas/export';
 import { Icon } from './Icon';
 
@@ -53,6 +52,22 @@ export function SettingsSheet({ onClose, onFinish }: { onClose: () => void; onFi
         </div>
       </div>
       <div className="row">
+        <span>Line colour</span>
+        <div className="seg">
+          {(['ink', 'brown', 'grey'] as const).map((k) => (
+            <button key={k} className={(settings.ink ?? 'ink') === k ? 'on' : ''} onClick={() => setSettings({ ink: k })}>
+              {k === 'ink' ? 'Ink' : k === 'brown' ? 'Warm brown' : 'Soft grey'}
+            </button>
+          ))}
+        </div>
+      </div>
+      <div className="row">
+        <span>Paper texture</span>
+        <button className={`toggle${settings.paper ? ' on' : ''}`} onClick={() => setSettings({ paper: !settings.paper })}>
+          <span className="knob" />
+        </button>
+      </div>
+      <div className="row">
         <span>
           Quick finger tap fills
           <small>When using Apple Pencil, a short finger tap can still fill an area</small>
@@ -92,14 +107,13 @@ export function SettingsSheet({ onClose, onFinish }: { onClose: () => void; onFi
 }
 
 export function ExportSheet({ onClose }: { onClose: () => void }) {
-  const pageId = useStore((s) => s.pageId);
+  const page = useStore((s) => s.page);
   const doc = useStore((s) => s.doc);
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string>('');
   const [error, setError] = useState('');
 
   useEffect(() => {
-    const page = pageId ? PAGE_BY_ID[pageId] : null;
     if (!page) return;
     let url = '';
     renderPNG(page, doc)
@@ -112,7 +126,7 @@ export function ExportSheet({ onClose }: { onClose: () => void }) {
     return () => {
       if (url) URL.revokeObjectURL(url);
     };
-  }, [pageId, doc]);
+  }, [page, doc]);
 
   return (
     <Sheet title="Save your page" onClose={onClose}>

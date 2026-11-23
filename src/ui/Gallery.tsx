@@ -1,8 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
-import { DIFFICULTY_LABEL, PAGES, PAGE_BY_ID } from '../pages';
-import type { Page } from '../pages/types';
+import { DIFFICULTY_LABEL, PAGES, META_BY_ID, thumbUrl } from '../pages/catalog';
+import type { PageMeta } from '../pages/types';
 import { deleteArtwork, loadAllArtworks, loadMeta, saveArtwork, saveMeta, type Album, type Artwork } from '../storage/db';
-import { thumbnail } from '../canvas/render';
 import { useStore } from '../state/store';
 import { Sheet } from './Sheets';
 import { Icon } from './Icon';
@@ -11,12 +10,12 @@ type Tab = 'pages' | 'mine';
 type PageFilter = 'all' | 'started';
 type MineFilter = 'all' | 'progress' | 'finished' | 'fav' | `album:${string}`;
 
-const blankThumbs = new Map<string, string>();
-const blankThumb = (p: Page) => {
-  if (!blankThumbs.has(p.id)) blankThumbs.set(p.id, thumbnail(p, { fills: { ...(p.preFill ?? {}) }, strokes: [] }));
-  return blankThumbs.get(p.id)!;
+const titleOf = (a: Artwork) => a.title || META_BY_ID[a.pageId]?.title || 'Untitled';
+/** card image keeps the page's shape (square or tall) */
+const aspect = (id: string) => {
+  const m = META_BY_ID[id];
+  return m ? `${m.w} / ${m.h}` : '1';
 };
-const titleOf = (a: Artwork) => a.title || PAGE_BY_ID[a.pageId]?.title || 'Untitled';
 
 export function Gallery() {
   const [arts, setArts] = useState<Artwork[]>([]);
@@ -39,7 +38,7 @@ export function Gallery() {
     return m;
   }, [arts]);
 
-  const openPageCard = (p: Page) => {
+  const openPageCard = (p: PageMeta) => {
     if (byPage[p.id]?.length) setVersionsOf(p.id);
     else useStore.getState().newArtwork(p.id);
   };
@@ -54,7 +53,7 @@ export function Gallery() {
     saveMeta('albums', a);
   };
 
-  const pages = PAGES.filter((p) => pageFilter === 'all' || (p.preFill && Object.keys(p.preFill).length > 0));
+  const pages = PAGES.filter((p) => pageFilter === 'all' || p.started);
   const categories = [...new Set(pages.map((p) => p.category))];
   const mine = arts.filter((a) => {
     if (mineFilter === 'progress') return a.status === 'in-progress';
@@ -102,12 +101,12 @@ export function Gallery() {
                     const latest = versions[0];
                     return (
                       <button key={p.id} className="card" onClick={() => openPageCard(p)}>
-                        <img src={latest?.thumb ?? blankThumb(p)} alt="" loading="lazy" />
+                        <img src={latest?.thumb ?? thumbUrl(p.id)} alt="" loading="lazy" style={{ aspectRatio: aspect(p.id) }} />
                         <div className="card-meta">
                           <div className="card-title">{p.title}</div>
                           <div className="card-sub">{DIFFICULTY_LABEL[p.difficulty]}</div>
                           <div className="badges">
-                            {p.preFill && Object.keys(p.preFill).length > 0 && !versions.length && <span className="badge warm">Started for you</span>}
+                            {p.started && !versions.length && <span className="badge warm">Started for you</span>}
                             {versions.length === 1 && <span className={`badge${latest.status === 'finished' ? ' green' : ''}`}>{latest.status === 'finished' ? 'Finished' : 'In progress'}</span>}
                             {versions.length > 1 && <span className="badge">{versions.length} versions</span>}
                           </div>
@@ -166,7 +165,7 @@ export function Gallery() {
             {mine.map((a) => (
               <div key={a.id} className="card art-card">
                 <button className="card-open" onClick={() => useStore.getState().openArtwork(a.id)}>
-                  <img src={a.thumb ?? blankThumb(PAGE_BY_ID[a.pageId])} alt="" loading="lazy" />
+                  <img src={a.thumb ?? thumbUrl(a.pageId)} alt="" loading="lazy" style={{ aspectRatio: aspect(a.pageId) }} />
                 </button>
                 <div className="card-meta">
                   <div className="card-title">{titleOf(a)}</div>
@@ -190,12 +189,12 @@ export function Gallery() {
       )}
 
       {versionsOf && (
-        <Sheet title={PAGE_BY_ID[versionsOf].title} onClose={() => setVersionsOf(null)}>
+        <Sheet title={META_BY_ID[versionsOf]?.title ?? ''} onClose={() => setVersionsOf(null)}>
           <p className="muted small">Carry on with a version, or start this page again with fresh colours.</p>
           <div className="versions">
             {(byPage[versionsOf] ?? []).map((a) => (
               <button key={a.id} className="version" onClick={() => useStore.getState().openArtwork(a.id)}>
-                <img src={a.thumb ?? blankThumb(PAGE_BY_ID[a.pageId])} alt="" />
+                <img src={a.thumb ?? thumbUrl(a.pageId)} alt="" />
                 <span>{a.status === 'finished' ? 'Finished' : 'In progress'}</span>
               </button>
             ))}
@@ -212,7 +211,7 @@ export function Gallery() {
       {details && (
         <Sheet title={titleOf(details)} onClose={() => setDetails(null)}>
           <div className="art-details">
-            <img src={details.thumb ?? blankThumb(PAGE_BY_ID[details.pageId])} alt="" />
+            <img src={details.thumb ?? thumbUrl(details.pageId)} alt="" />
             <div className="row-btns">
               <button className="soft-btn primary" onClick={() => useStore.getState().openArtwork(details.id)}>
                 Open

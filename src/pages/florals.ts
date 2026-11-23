@@ -1,3 +1,4 @@
+import { bunting, extendPage, othersThan, regionD, scatter, woodGrain } from './details';
 import { circle, ellipse, leaf, rect, ribbon, sectorRing, type Pt } from './geometry';
 import { layeredPage } from './define';
 import { Layers, petal, polyD, roundRect, triangleRow, curve } from './shapes';
@@ -42,9 +43,10 @@ export const sunflower = layeredPage({ id: 'sunflower', title: 'Sunflower Mornin
   addRegions(L, sectorRing({ id: 'sd2', cx, cy, r1: 80, r2: 112, n: 20 }));
   addRegions(L, sectorRing({ id: 'sd1', cx, cy, r1: 46, r2: 80, n: 12, a0: 0.2 }));
   L.add('core', circle(cx, cy, 46), [cx, cy]);
+  scatter(L, { within: regionD(L, 'bg1'), avoid: othersThan(L, 'bg1'), motifs: ['flower', 'leaf', 'dot', 'sparkle'], spacing: 92, size: [13, 22], seed: 4, after: 'bg1' });
   return {
     layers: L,
-    inspiration: {
+    inspiration: { motif: ['#FFE29A', '#FFD6E0', '#B5EAD7', '#C7CEEA', '#FFDAC1'], motifC: ['#F6AE2D', '#E5989B', '#81B29A'],
       bg: '#E0F7FA', dot: '#FFF3B0', stem: '#606C38', leaf: '#8A9A5B', leaf2: '#588157',
       petalB: '#F6AE2D', petalF: '#FFC857', disk: '#7F5539', sd2a: '#9C4221', sd2b: '#7F5539', sd1a: '#B08968', sd1b: '#8D5524', core: '#5B2A1F',
     },
@@ -70,13 +72,14 @@ export const tropicalLeaves = layeredPage({ id: 'tropical-leaves', title: 'Tropi
   });
   // berries
   for (const [x, y] of [[500, 860], [470, 890], [530, 892]]) L.dot('berry', x, y, 17);
+  scatter(L, { within: regionD(L, 'bg1'), avoid: othersThan(L, 'bg1'), motifs: ['dot', 'sparkle', 'swirl', 'clover'], spacing: 78, size: [12, 20], seed: 6, after: 'bg1' });
   return {
     layers: L,
-    inspiration: { bg: '#FAEDCD', stem: '#3A5A40', leaf: '#A3B18A', leaf2: '#588157', leafD: '#588157', leafD2: '#3A5A40', berry: '#E07A5F' },
+    inspiration: { motif: ['#FFE29A', '#FFD6E0', '#B5EAD7', '#C7CEEA', '#FFDAC1'], motifC: ['#F6AE2D', '#E5989B', '#81B29A'], bg: '#FAEDCD', stem: '#3A5A40', leaf: '#A3B18A', leaf2: '#588157', leafD: '#588157', leafD2: '#3A5A40', berry: '#E07A5F' },
   };
 });
 
-export const pottedPlant = layeredPage({ id: 'potted-plant', title: 'Potted Plant', category: 'Florals & botanicals', difficulty: 'easy' }, () => {
+export const pottedPlant = layeredPage({ id: 'potted-plant', title: 'Potted Plant', category: 'Florals & botanicals', difficulty: 'easy', h: 1333 }, () => {
   const L = new Layers();
   L.add('wall', rect(0, 0, 1000, 840), [30, 30]);
   L.add('table', rect(0, 840, 1000, 160), [30, 960]);
@@ -102,9 +105,22 @@ export const pottedPlant = layeredPage({ id: 'potted-plant', title: 'Potted Plan
   triangleRow(300, 700, 700, 770, 8).forEach((t) => L.add('tri', intersect(t, pot)));
   L.add('band', intersect(rect(300, 790, 400, 26), pot), [500, 803]);
   L.add('rim', roundRect(305, 600, 390, 64, 16), [500, 632]);
+  // make it tall, then fill the new wall space
+  extendPage(L, 'top', 333);
+  bunting(L, -20, 1020, 70, 90, 11);
+  L.add('frame', roundRect(130, 230, 220, 260, 110), [240, 250]);
+  L.add('frameIn', roundRect(150, 250, 180, 220, 90), [240, 360]);
+  L.add('sun', circle(240, 330, 40), [240, 330]);
+  L.add('hill', polyD([[152, 470], [200, 400], [250, 440], [300, 390], [330, 430], [330, 470]]), [260, 450]);
+  L.add('shelf', roundRect(600, 380, 300, 22, 8), [750, 391]);
+  for (const [x, w, hh] of [[620, 34, 90], [656, 28, 76], [686, 40, 100]] as [number, number, number][]) L.add('shelfBook', roundRect(x, 380 - hh, w, hh, 5), [x + w / 2, 380 - hh / 2]);
+  L.add('tinyPot', polyD([[780, 380], [860, 380], [850, 330], [790, 330]]), [820, 360]);
+  for (const a of [-2.3, -1.6, -0.9]) L.add('tinyLeaf', petal(820, 330, a, 0, 70, 18, 0.6));
+  woodGrain(L, 'table1', 0, 1173, 1000, 1333);
+  scatter(L, { within: regionD(L, 'wall1'), avoid: othersThan(L, 'wall1'), motifs: ['dot', 'star'], spacing: 110, size: [8, 13], seed: 8, after: 'wall1' });
   return {
     layers: L,
-    inspiration: {
+    inspiration: { motif: ['#FFE29A', '#FFD6E0', '#B5EAD7', '#C7CEEA', '#FFDAC1'], motifC: ['#F6AE2D', '#E5989B', '#81B29A'], string: '#7F5539', flag: ['#E07A5F', '#F2CC8F', '#81B29A', '#3D405B'], frame: '#D4A373', frameIn: '#FFF3B0', sun: '#F6AE2D', hill: '#81B29A', shelf: '#7F5539', shelfBook: ['#264653', '#E9C46A', '#E76F51'], tinyPot: '#F4A261', tinyLeaf: '#588157',
       wall: '#F6E7CB', table: '#B08968', diamond: '#E6CCB2', blade: '#588157', stripe: '#A3B18A',
       saucer: '#BC6C25', pot: '#E07A5F', tri: ['#FAEDCD', '#9E2A2B'], band: '#FAEDCD', rim: '#C8553D',
     },

@@ -15,7 +15,7 @@ const bloomRegions: Region[] = [
   ...petalRing({ id: 'd', cx, cy, r1: 380, r2: 450, n: 12, shape: 'round' }),
 ];
 export const mandalaBloom = plainPage(
-  { id: 'mandala-bloom', title: 'Simple Bloom', category: 'Mandalas & geometric', difficulty: 'easy', symmetry: { cx, cy, n: 6 } },
+  { id: 'mandala-bloom', title: 'Simple Bloom', category: 'Mandalas & geometric', difficulty: 'easy', symmetry: { cx, cy, n: 6 }, crisp: true },
   bloomRegions,
   { bg: '#E2F0CB', c: '#FFEFCF', ap: '#FFD6E0', av: '#C7CEEA', bp: '#B5EAD7', bv: '#FFDAC1', dp: '#F3C4D6', dv: '#FCE1E4' },
 );
@@ -39,7 +39,7 @@ for (const [x, y] of [[70, 70], [930, 70], [70, 930], [930, 930]]) {
   oceanRegions.push({ id: `st${x}${y}`, d: 'M' + pts.map((p) => p.join(' ')).join('L') + 'Z', c: [x, y], g: 'star' });
 }
 export const mandalaOcean = plainPage(
-  { id: 'mandala-ocean', title: 'Ocean Star Mandala', category: 'Mandalas & geometric', difficulty: 'detailed', symmetry: { cx, cy, n: 3 } },
+  { id: 'mandala-ocean', title: 'Ocean Star Mandala', category: 'Mandalas & geometric', difficulty: 'detailed', symmetry: { cx, cy, n: 3 }, crisp: true },
   oceanRegions,
   {
     bg: '#EDF6F9', c: '#006D77', r1p: '#83C5BE', r1v: '#E0F7FA', r2a: '#3D5A80', r2b: '#98C1D9', r3p: '#4DD0E1', r3v: '#CDE7E3', r3d: '#293241',
@@ -101,7 +101,7 @@ const tileRegions: Region[] = [{ id: 'frame', d: rect(0, 0, 1000, 1000), c: [20,
   pieces.forEach((p, n) => p.dot && tileRegions.push({ id: `dt${n}`, d: circle(p.dot[0], p.dot[1], 10), c: p.dot as [number, number], g: 'dot' }));
 }
 export const quietTiles = plainPage(
-  { id: 'quiet-tiles', title: 'Quiet Ribbons', category: 'Mandalas & geometric', difficulty: 'medium' },
+  { id: 'quiet-tiles', title: 'Quiet Ribbons', category: 'Mandalas & geometric', difficulty: 'medium', crisp: true },
   tileRegions,
   { frame: '#F6E7CB', ribbon: ['#A3B18A', '#FAEDCD', '#DDB892', '#E9EDC9', '#588157', '#E6CCB2', '#CCD5AE'], dot: '#BC6C25' },
 );

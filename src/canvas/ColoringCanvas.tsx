@@ -3,7 +3,7 @@ import type { Page, Region } from '../pages/types';
 import { useStore } from '../state/store';
 import type { Doc } from '../storage/db';
 import { eraseStrokes, strokeLook, strokeOpacity, strokeOutline, strokePath, type BrushKind, type Stroke } from './brush';
-import { groupStrokes, INK, LINE_W, PAPER } from './render';
+import { BOLD_W, FINE_W, groupStrokes, INKS, LINE_W, PAPER } from './render';
 import { fillAttr, fillDefs, makeFill, parseFill } from './fills';
 import { textureDefs } from './textures';
 import { symmetryOf, type Xf } from './symmetry';
@@ -38,6 +38,7 @@ export function ColoringCanvas({ page }: { page: Page }) {
   const fitNonce = useStore((s) => s.fitNonce);
   const missedNonce = useStore((s) => s.missedNonce);
   const paper = useStore((s) => s.settings.paper);
+  const ink = useStore((s) => s.settings.ink ?? 'ink');
   const wrapRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const gRef = useRef<SVGGElement>(null);
@@ -511,7 +512,7 @@ export function ColoringCanvas({ page }: { page: Page }) {
               ))}
             </g>
           )}
-          <Outlines page={page} />
+          <Outlines page={page} ink={INKS[ink]} />
         </g>
       </svg>
       <div ref={ringRef} className="brush-ring" />
@@ -557,9 +558,10 @@ const StrokeEl = memo(function StrokeEl({ s }: { s: Stroke }) {
   return <path d={strokePath(s)} {...toProps(strokeLook(s))} />;
 });
 
-const Outlines = memo(function Outlines({ page }: { page: Page }) {
+const Outlines = memo(function Outlines({ page, ink }: { page: Page; ink: string }) {
+  const lw = page.contours?.length ? FINE_W : LINE_W;
   return (
-    <g fill="none" stroke={INK} strokeWidth={LINE_W} strokeLinejoin="round" strokeLinecap="round" pointerEvents="none">
+    <g fill="none" stroke={ink} strokeWidth={lw} strokeLinejoin="round" strokeLinecap="round" pointerEvents="none">
       {page.regions.map((r) => (
         <path key={r.id} d={r.d} />
       ))}
@@ -573,10 +575,11 @@ const Outlines = memo(function Outlines({ page }: { page: Page }) {
                 <path d={reg.d} clipRule="evenodd" />
               </clipPath>
             )}
-            <path d={d} strokeWidth={LINE_W * 0.7} clipPath={reg ? `url(#dc${i})` : undefined} />
+            <path d={d} strokeWidth={lw * 0.7} clipPath={reg ? `url(#dc${i})` : undefined} />
           </g>
         );
       })}
+      {page.contours?.map((d, i) => <path key={`c${i}`} d={d} strokeWidth={BOLD_W} />)}
     </g>
   );
 });

@@ -71,6 +71,7 @@ export const mandalaLotus: Page = {
   category: 'Mandalas & geometric',
   difficulty: 'detailed',
   symmetry: { cx, cy, n: 4 },
+  crisp: true,
   w: 1000,
   h: 1000,
   regions,

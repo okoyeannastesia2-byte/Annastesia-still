@@ -1,7 +1,6 @@
 import { useMemo, useRef, useState } from 'react';
 import { useStore, savePrefs, type Tool } from '../state/store';
 import { PALETTES } from '../palettes/palettes';
-import { PAGE_BY_ID } from '../pages';
 import { playAmbience, setAmbienceVolume, type Ambience } from '../audio/ambient';
 import { thumbnail } from '../canvas/render';
 import { Sheet } from './Sheets';
@@ -112,10 +111,9 @@ export function minutesNote(ms: number) {
 }
 
 export function FinishedSheet({ onClose, onExport }: { onClose: () => void; onExport: () => void }) {
-  const pageId = useStore((s) => s.pageId);
+  const page = useStore((s) => s.page);
   const doc = useStore((s) => s.doc);
   const timeMs = useStore((s) => s.timeMs);
-  const page = pageId ? PAGE_BY_ID[pageId] : null;
   const src = useMemo(() => (page ? thumbnail(page, doc) : ''), [page, doc]);
   const closing = useRef(false);
   if (!page) return null;

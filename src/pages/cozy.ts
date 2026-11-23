@@ -1,3 +1,4 @@
+import { bunting, extendPage, othersThan, regionD, scatter, woodGrain } from './details';
 import { circle, ellipse, rect, ribbon, type Pt } from './geometry';
 import { layeredPage } from './define';
 import { Layers, curve, drop, petal, polyD, roundRect, shape, smooth, S } from './shapes';
@@ -45,9 +46,11 @@ export const cafeMorning = layeredPage({ id: 'cafe-morning', title: 'Café Morni
   L.add('cup', union(shape([S([443, 600]), S([687, 600]), [676, 690], [620, 760], [510, 760], [454, 690]]), cupTop), [480, 690]);
   L.add('coffee', ellipse(565, 600, 108, 21), [500, 600]);
   L.add('latte', heart(565, 600, 22), [565, 600]);
+  woodGrain(L, 'table1', 0, 650, 1000, 1000, 12);
+  bunting(L, -20, 1020, 20, 70, 10);
   return {
     layers: L,
-    inspiration: {
+    inspiration: { string: '#7F5539', flag: ['#E07A5F', '#81B29A', '#F2CC8F', '#6D597A'],
       stripeA: '#F4D6CC', stripeB: '#FAEDCD', mirror: '#D4A373', mirrorIn: '#DDEDEA', table: '#B08968', book: ['#6D597A', '#2A9D8F'], pages: '#FAEDCD',
       plant: '#588157', jar: '#CDE7E3', jarBand: '#E07A5F', cookie: '#DDB892', chip: '#6B3E2E', steam: '#FFFFFF', saucer: '#FFFFFF', spoon: '#A89F91',
       cupH: '#E07A5F', cup: '#E07A5F', coffee: '#7F5539', latte: '#F2E9E4',
@@ -56,7 +59,7 @@ export const cafeMorning = layeredPage({ id: 'cafe-morning', title: 'Café Morni
 });
 
 // ---------------- Rainy window ----------------
-export const rainyWindow = layeredPage({ id: 'rainy-window', title: 'Rain on the Window', category: 'Cozy scenes', difficulty: 'detailed' }, () => {
+export const rainyWindow = layeredPage({ id: 'rainy-window', title: 'Rain on the Window', category: 'Cozy scenes', difficulty: 'detailed', h: 1333 }, () => {
   const L = new Layers();
   L.add('wall', rect(0, 0, 1000, 1000), [30, 980]);
   // the view
@@ -106,9 +109,20 @@ export const rainyWindow = layeredPage({ id: 'rainy-window', title: 'Rain on the
   L.add('rod', roundRect(30, 52, 940, 22, 11), [500, 63]);
   L.dot('finial', 30, 63, 22);
   L.dot('finial', 970, 63, 22);
+  // tall page: a radiator, a floor and a little plant below the window
+  extendPage(L, 'bottom', 333);
+  L.add('floor', rect(0, 1190, 1000, 143), [30, 1300]);
+  woodGrain(L, 'floor1', 0, 1190, 1000, 1333, 21);
+  L.add('radiator', roundRect(310, 900, 380, 200, 18), [330, 1000]);
+  for (let i = 0; i < 7; i++) L.add('fin', roundRect(332 + i * 50, 918, 36, 164, 14), [350 + i * 50, 1000]);
+  L.add('radiatorFoot', rect(340, 1100, 24, 90), [352, 1140]);
+  L.add('radiatorFoot', rect(636, 1100, 24, 90), [648, 1140]);
+  L.add('floorPot', polyD([[90, 1210], [210, 1210], [195, 1300], [105, 1300]]), [150, 1260]);
+  for (const a of [-2.4, -2, -1.57, -1.1, -0.7]) L.add('floorLeaf', petal(150, 1210, a, 0, 170, 30, 0.5));
+  scatter(L, { within: regionD(L, 'wall1'), avoid: othersThan(L, 'wall1'), motifs: ['dot', 'clover'], spacing: 120, size: [9, 14], seed: 31, after: 'wall1' });
   return {
     layers: L,
-    inspiration: {
+    inspiration: { motif: ['#FFE29A', '#FFD6E0', '#B5EAD7', '#C7CEEA', '#FFDAC1'], motifC: ['#F6AE2D', '#E5989B', '#81B29A'], floor: '#B08968', radiator: '#FBF5EF', fin: '#E8D5C4', radiatorFoot: '#A89F91', floorPot: '#C8553D', floorLeaf: '#588157',
       wall: '#E8D5C4', sky: '#98C1D9', cloud: '#EDF6F9', hillFar: '#83C5BE', hillNear: '#5E9FA3', house: ['#F2CC8F', '#E5989B'], roof: '#6D597A', houseWin: '#FFE29A',
       drop: '#E0F7FA', frame: '#FBF5EF', bar: '#FBF5EF', sill: '#D6B89C', apron: '#C9A27E', mugH: '#B56576', mug: '#B56576', mugHeart: '#FCE1E4', steam: '#FFFFFF',
       cactus: '#588157', pot: '#E07A5F', curtain: '#3D5A80', tie: '#E9C46A', rod: '#7F5539', finial: '#B08968',
@@ -117,7 +131,7 @@ export const rainyWindow = layeredPage({ id: 'rainy-window', title: 'Rain on the
 });
 
 // ---------------- Reading nook ----------------
-export const readingNook = layeredPage({ id: 'reading-nook', title: 'The Reading Nook', category: 'Cozy scenes', difficulty: 'detailed' }, () => {
+export const readingNook = layeredPage({ id: 'reading-nook', title: 'The Reading Nook', category: 'Cozy scenes', difficulty: 'detailed', h: 1333 }, () => {
   const L = new Layers();
   L.add('wall', rect(0, 0, 1000, 730), [30, 30]);
   L.add('floor', rect(0, 730, 1000, 270), [30, 980]);
@@ -165,9 +179,18 @@ export const readingNook = layeredPage({ id: 'reading-nook', title: 'The Reading
   L.add('bookS', roundRect(820, 556, 130, 30, 6), [840, 570]);
   L.add('bookS', roundRect(830, 528, 112, 30, 6), [845, 542]);
   mug(L, 850, 470, 50, 56, 'tea');
+  // tall page: garland and a little shelf above the picture
+  extendPage(L, 'top', 333);
+  bunting(L, -20, 1020, 50, 80, 12);
+  L.add('shelf', roundRect(80, 300, 320, 22, 8), [240, 311]);
+  for (const [x, w, hh] of [[100, 30, 96], [132, 26, 80], [160, 36, 104], [198, 30, 70]] as [number, number, number][]) L.add('shelfBook', roundRect(x, 300 - hh, w, hh, 5), [x + w / 2, 300 - hh / 2]);
+  L.add('jar', roundRect(290, 230, 70, 70, 16), [325, 265]);
+  for (const a of [-2.2, -1.57, -0.9]) L.add('jarLeaf', petal(325, 232, a, 0, 60, 16, 0.6));
+  woodGrain(L, 'floor1', 0, 1063, 1000, 1333, 17);
+  scatter(L, { within: regionD(L, 'wall1'), avoid: othersThan(L, 'wall1'), motifs: ['leaf', 'dot'], spacing: 115, size: [10, 15], seed: 41, after: 'wall1' });
   return {
     layers: L,
-    inspiration: {
+    inspiration: { motif: ['#FFE29A', '#FFD6E0', '#B5EAD7', '#C7CEEA', '#FFDAC1'], motifC: ['#F6AE2D', '#E5989B', '#81B29A'], string: '#7F5539', flag: ['#E07A5F', '#F2CC8F', '#2A9D8F', '#5B2A86'], shelf: '#7F5539', shelfBook: ['#E9C46A', '#264653', '#C8553D', '#81B29A'], jar: '#CDE7E3', jarLeaf: '#588157',
       wall: '#E2F0CB', floor: '#B08968', frameP: '#7F5539', art: '#FFEFCF', artSun: '#F6AE2D', artHill: '#81B29A', rope: '#B08968', vine: '#3A5A40', ivy: '#588157', hangPot: '#E07A5F',
       rug: '#E07A5F', rug2: '#F2CC8F', rug3: '#E07A5F', lampBase: '#3D405B', lampPole: '#3D405B', shade: '#F2CC8F', shadeBand: '#E07A5F',
       chairBack: '#2A9D8F', button: '#E9C46A', leg: '#7F5539', seat: '#2A9D8F', arm: '#1F7A8C', pillow: '#F4A261', blanket: '#FAEDCD', blStripe: '#C8553D',

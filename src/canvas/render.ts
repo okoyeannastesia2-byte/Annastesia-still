@@ -7,6 +7,10 @@ import { textureDefs } from './textures';
 export const INK = '#2f2925';
 export const PAPER = '#ffffff';
 export const LINE_W = 3.2;
+/** fine inner lines and bold outer contours on pages that have contours */
+export const FINE_W = 2.2;
+export const BOLD_W = 4.6;
+export const INKS = { ink: '#2f2925', brown: '#5b4636', grey: '#8a8580' } as const;
 
 export function groupStrokes(strokes: Stroke[]) {
   const byRegion: Record<string, Stroke[]> = {};
@@ -58,7 +62,9 @@ export function pageSVG(page: Page, doc: Doc, width: number, opts: RenderOpts = 
   }
   body += free.map(strokeEl).join('');
   if (tex && opts.paper !== false) body += `<rect width="${page.w}" height="${page.h}" fill="url(#tex_paper)" style="mix-blend-mode:multiply"/>`;
-  const lw = opts.lineW ?? LINE_W;
+  const hasContours = !!page.contours?.length;
+  const scale = (opts.lineW ?? LINE_W) / LINE_W;
+  const lw = (hasContours ? FINE_W : LINE_W) * scale;
   let outlines = page.regions.map((r) => `<path d="${r.d}"/>`).join('');
   page.decor?.forEach((dec, i) => {
     const { d, clip } = typeof dec === 'string' ? { d: dec, clip: undefined } : dec;
@@ -70,6 +76,7 @@ export function pageSVG(page: Page, doc: Doc, width: number, opts: RenderOpts = 
     defs += `<clipPath id="dc${i}"><path d="${reg.d}" clip-rule="evenodd"/></clipPath>`;
     outlines += `<path d="${d}" stroke-width="${lw * 0.7}" clip-path="url(#dc${i})"/>`;
   });
+  if (hasContours) outlines += page.contours!.map((d) => `<path d="${d}" stroke-width="${BOLD_W * scale}"/>`).join('');
   body += `<g fill="none" stroke="${opts.ink ?? INK}" stroke-width="${lw}" stroke-linejoin="round" stroke-linecap="round">${outlines}</g>`;
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${page.w} ${page.h}"><defs>${defs}</defs><rect width="${page.w}" height="${page.h}" fill="${PAPER}"/>${body}</svg>`;
 }

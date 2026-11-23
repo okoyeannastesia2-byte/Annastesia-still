@@ -1,6 +1,7 @@
+import { extendPage, grassTufts, othersThan, regionD, ripples, scatter } from './details';
 import { circle, ellipse, leaf, rect, ribbon, polar, type Pt } from './geometry';
 import { layeredPage } from './define';
-import { Layers, curve, hband, polyD, star } from './shapes';
+import { Layers, curve, hband, polyD, roundRect, star } from './shapes';
 import { intersect, union } from './flatten';
 
 const bird = (x: number, y: number, s: number) => curve([[x - s, y - s * 0.4], [x - s * 0.45, y - s * 0.55], [x, y]]) + curve([[x, y], [x + s * 0.45, y - s * 0.55], [x + s, y - s * 0.4]]).replace('M', 'M');
@@ -47,9 +48,12 @@ export const mountainSunset = layeredPage({ id: 'mountain-sunset', title: 'Mount
   pine(L, 190, 920, 200);
   pine(L, 880, 905, 240);
   pine(L, 790, 930, 170);
+  ripples(L, 'lake1', 60, 775, 940, 885, 4);
+  grassTufts(L, 'hills1', (x) => 650 - 40 * Math.sin(x / 180), 0, 1000, 3);
+  scatter(L, { within: regionD(L, 'shore1'), avoid: othersThan(L, 'shore1'), motifs: ['flower', 'clover'], spacing: 70, size: [11, 16], seed: 7, margin: 6 });
   return {
     layers: L,
-    inspiration: {
+    inspiration: { motif: ['#FFE29A', '#FFD6E0', '#B5EAD7', '#C7CEEA', '#FFDAC1'], motifC: ['#F6AE2D', '#E5989B', '#81B29A'],
       sky0: '#355070', sky1: '#6D597A', sky2: '#B56576', sky3: '#E56B6F', sky4: '#EAAC8B', sun: '#F7B267', sunIn: '#FFE29A',
       mtFar: '#6D597A', snow: '#FCE8D5', mtMid: '#B56576', hills: '#355070', lake: '#E5989B', glint: '#FFCDB2', shore: '#2B2D42', trunk: '#3D405B', pine: '#22223B',
     },
@@ -88,9 +92,11 @@ export const oceanWaves = layeredPage({ id: 'ocean-waves', title: 'Ocean Waves',
       L.add(`swirl`, intersect(ribbon((t) => polar(cx, cy, 6 + t * 30, t * Math.PI * 3.4 + i), (t) => 4 + t * 6, 50), wave));
     }
   });
+  ripples(L, 'sea1', 0, 410, 1000, 470, 15);
+  scatter(L, { within: regionD(L, 'sky1'), avoid: othersThan(L, 'sky1', 'sea1'), motifs: ['sparkle', 'dot'], spacing: 110, size: [9, 15], seed: 12, after: 'sky1' });
   return {
     layers: L,
-    inspiration: {
+    inspiration: { motif: ['#FFE29A', '#FFD6E0', '#B5EAD7', '#C7CEEA', '#FFDAC1'], motifC: ['#F6AE2D', '#E5989B', '#81B29A'],
       sky: '#FCE8D5', sun: '#F7B267', sunIn: '#FFE29A', cloud: '#FFFFFF', sea: '#98C1D9', hull: '#7F5539', sail: '#FFFFFF', sail2: '#F2CC8F',
       wave0: '#83C5BE', wave1: '#4DD0E1', wave2: '#00897B', wave3: '#006D77', foam: '#E0F7FA', swirl: '#E0F7FA',
     },
@@ -117,7 +123,7 @@ function palm(L: Layers, base: Pt, top: Pt, lean: number) {
   for (const [dx, dy] of [[-16, 18], [16, 20], [0, 34]]) L.dot('coconut', crown[0] + dx, crown[1] + dy, 15);
 }
 
-export const palmBeach = layeredPage({ id: 'palm-beach', title: 'Palm Beach', category: 'Nature & landscapes', difficulty: 'medium' }, () => {
+export const palmBeach = layeredPage({ id: 'palm-beach', title: 'Palm Beach', category: 'Nature & landscapes', difficulty: 'medium', h: 1333 }, () => {
   const L = new Layers();
   L.add('sky', rect(0, 0, 1000, 560), [500, 40]);
   L.add('sun', circle(500, 470, 130), [500, 400]);
@@ -135,9 +141,20 @@ export const palmBeach = layeredPage({ id: 'palm-beach', title: 'Palm Beach', ca
   L.add('shell', ellipse(560, 930, 26, 18), [560, 930]);
   palm(L, [170, 980], [300, 330], 60);
   palm(L, [910, 1000], [790, 420], -50);
+  // tall page: more sand to explore
+  extendPage(L, 'bottom', 333);
+  L.add('mound', ellipse(170, 1000, 80, 24), [170, 1005]);
+  L.add('mound', ellipse(910, 1012, 80, 24), [910, 1017]);
+  L.add('castle', polyD([[560, 1130], [560, 1040], [585, 1040], [585, 1060], [610, 1060], [610, 1040], [640, 1040], [640, 1060], [665, 1060], [665, 1040], [690, 1040], [690, 1130]]), [625, 1100]);
+  L.add('castleDoor', roundRect(608, 1090, 34, 40, 16), [625, 1110]);
+  L.add('flagPole', rect(624, 990, 4, 50), [626, 1015]);
+  L.add('castleFlag', polyD([[628, 990], [660, 1002], [628, 1014]]), [640, 1002]);
+  L.add('bucket', polyD([[740, 1080], [820, 1080], [808, 1150], [752, 1150]]), [780, 1115]);
+  L.add('bucketRim', roundRect(734, 1068, 92, 16, 6), [780, 1076]);
+  scatter(L, { within: regionD(L, 'sand1'), avoid: othersThan(L, 'sand1'), motifs: ['star', 'dot', 'clover'], spacing: 120, size: [14, 22], seed: 19 });
   return {
     layers: L,
-    inspiration: {
+    inspiration: { motif: ['#FFE29A', '#FFD6E0', '#B5EAD7', '#C7CEEA', '#FFDAC1'], motifC: ['#F6AE2D', '#E5989B', '#81B29A'], mound: '#E9C46A', castle: '#F2CC8F', castleDoor: '#D4A373', flagPole: '#7F5539', castleFlag: '#E07A5F', bucket: '#4DD0E1', bucketRim: '#26A69A',
       sky: '#FFE29A', sun: '#F28F3B', cloud: '#FFF3B0', sea: '#26A69A', ripple: '#80DEEA', foamLine: '#E0F7FA', sand: '#F2CC8F', star: '#E07A5F', shell: '#FFB4A2',
       trunk: ['#B08968', '#7F5539'], frond: '#588157', frond2: '#3A5A40', coconut: '#6B3E2E',
     },

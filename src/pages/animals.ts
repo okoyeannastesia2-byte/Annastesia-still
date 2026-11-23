@@ -1,3 +1,4 @@
+import { othersThan, regionD, ripples, scatter } from './details';
 import { circle, ellipse, leaf, rect, ribbon, polar, type Pt } from './geometry';
 import { layeredPage, pick } from './define';
 import { Layers, curve, petal, polyD, shape, smooth, S, star } from './shapes';
@@ -44,9 +45,10 @@ export const butterfly = layeredPage({ id: 'butterfly', title: 'Garden Butterfly
   L.dot('tip', 428, 216, 10);
   L.dot('tip', 572, 216, 10);
   const wingCols = (s: string) => ({ [`wingU${s}`]: '#F79D65', [`upIn${s}`]: '#FFCDB2', [`eye${s}`]: '#6D597A', [`eyeIn${s}`]: '#FFE29A', [`wingL${s}`]: '#E56B6F', [`lowIn${s}`]: '#F9D5A7', [`spot${s}`]: '#355070', [`spotIn${s}`]: '#E5989B', [`edge${s}`]: '#FCE8D5' });
+  scatter(L, { within: regionD(L, 'bg1'), avoid: othersThan(L, 'bg1'), motifs: ['flower', 'leaf', 'dot', 'clover'], spacing: 88, size: [12, 19], seed: 22, after: 'bg1' });
   return {
     layers: L,
-    inspiration: { bg: '#E2F0CB', fPetal: '#FFD6E0', fCentre: '#FFC857', ...wingCols('R'), ...wingCols('L'), body: '#3D405B', head: '#3D405B', tip: '#3D405B' },
+    inspiration: { motif: ['#FFE29A', '#FFD6E0', '#B5EAD7', '#C7CEEA', '#FFDAC1'], motifC: ['#F6AE2D', '#E5989B', '#81B29A'], bg: '#E2F0CB', fPetal: '#FFD6E0', fCentre: '#FFC857', ...wingCols('R'), ...wingCols('L'), body: '#3D405B', head: '#3D405B', tip: '#3D405B' },
     // the left wings come coloured — you finish the right side
     preFill: (regions, insp) => pick(regions, insp, (r) => !!r.g && /L$/.test(r.g) && r.g !== 'bg'),
   };
@@ -80,9 +82,10 @@ export const peacockFeather = layeredPage({ id: 'peacock-feather', title: 'Peaco
   L.add('ring2', ellipse(500, 330, 104, 136), [500, 210]);
   L.add('heart', shape([S([500, 452]), [432, 360], [440, 280], [480, 252], S([500, 270]), [520, 252], [560, 280], [568, 360]]), [500, 320]);
   L.add('core', ellipse(500, 345, 32, 46), [500, 345]);
+  scatter(L, { within: regionD(L, 'bg1'), avoid: othersThan(L, 'bg1'), motifs: ['sparkle', 'dot', 'swirl'], spacing: 90, size: [10, 16], seed: 23, after: 'bg1' });
   return {
     layers: L,
-    inspiration: {
+    inspiration: { motif: ['#FFE29A', '#FFD6E0', '#B5EAD7', '#C7CEEA', '#FFDAC1'], motifC: ['#F6AE2D', '#E5989B', '#81B29A'],
       bg: '#F7F3E3', bgDot: '#C3BEF7', barb: '#5BC0BE', barb2: '#2A9D8F', barb22: '#1F7A8C', barb2x: '#1F7A8C', fringe: '#81B29A', vane: '#9DBE6A',
       ring1: '#D9A441', ring2: '#8D5524', heart: '#1F7A8C', core: '#0B132B', shaft: '#B08968', leaf: '#5BC0BE', leaf2: '#1F7A8C',
     },
@@ -123,9 +126,10 @@ export const sleepingCat = layeredPage({ id: 'sleeping-cat', title: 'Sleeping Ca
   L.line(curve([[380, 626], [380, 640], [366, 648]]), headId);
   L.line(curve([[380, 640], [394, 648]]), headId);
   for (const [a, b] of [[[300, 620], [240, 606]], [[300, 634], [236, 640]], [[460, 620], [520, 606]], [[460, 634], [524, 640]]] as [Pt, Pt][]) L.line(`M${a.join(' ')}L${b.join(' ')}`);
+  scatter(L, { within: regionD(L, 'bg1'), avoid: othersThan(L, 'bg1'), motifs: ['star', 'dot', 'heart', 'sparkle'], spacing: 96, size: [10, 16], seed: 24, after: 'bg1' });
   return {
     layers: L,
-    inspiration: {
+    inspiration: { motif: ['#FFE29A', '#FFD6E0', '#B5EAD7', '#C7CEEA', '#FFDAC1'], motifC: ['#F6AE2D', '#E5989B', '#81B29A'],
       bg: '#E8D3FF', bgStar: '#FFEFCF', cushion: '#B5EAD7', cushionTop: '#E2F0CB', cushionDot: '#FFD6E0', cat: '#F4A261', stripe: '#E76F51', ear: '#F4A261', earIn: '#FFD6E0',
       head: '#F4A261', nose: '#E5989B', tail: '#F4A261', tailTip: '#FAEDCD',
     },
@@ -165,9 +169,11 @@ export const koiPond = layeredPage({ id: 'koi-pond', title: 'Koi Pond', category
   L.dot('lotusC', 880, 860, 16);
   koi(L, 470, 340, Math.PI - 0.25, -0.5, 'A');
   koi(L, 530, 660, -0.25, -0.5, 'B');
+  ripples(L, 'water1', 40, 40, 960, 960, 25);
+  scatter(L, { within: regionD(L, 'water1'), avoid: othersThan(L, 'water1'), motifs: ['dot'], spacing: 120, size: [7, 12], seed: 26, after: 'water1' });
   return {
     layers: L,
-    inspiration: {
+    inspiration: { motif: '#83C5BE', motifC: '#83C5BE',
       water: '#5E9FA3', pad: '#81B29A', lotus: '#FFD6E0', lotusC: '#FFC857', tailA: '#FAEDCD', finA: '#FAEDCD', bodyA: '#FBF5EF', spotsA: '#F28F3B',
       tailB: '#F28F3B', finB: '#F28F3B', bodyB: '#F6AE2D', spotsB: '#FBF5EF', eye: '#0B132B',
     },
@@ -209,9 +215,10 @@ export const moonOwl = layeredPage({ id: 'moon-owl', title: 'Owl Under the Moon'
   L.add('branch', branch, [100, 820]);
   for (const [x, y, a] of [[150, 800, -2.4], [260, 790, -0.6], [780, 770, -2.3], [880, 770, -0.7], [70, 830, 2.4], [940, 790, 0.8]] as [number, number, number][]) L.add('leaf', petal(x, y, a, 0, 110, 30, 0.5));
   for (const x of [440, 470, 530, 560]) L.add('toe', ellipse(x, 802, 16, 22), [x, 802]);
+  scatter(L, { within: regionD(L, 'sky1'), avoid: othersThan(L, 'sky1'), motifs: ['star', 'dot', 'sparkle'], spacing: 85, size: [8, 14], seed: 27, after: 'sky1' });
   return {
     layers: L,
-    inspiration: {
+    inspiration: { motif: ['#FFD166', '#C3BEF7', '#F7F3E3'], motifC: '#FFD166',
       sky: '#1C2541', star: '#FFD166', moon: '#F7F3E3', moonIn: '#F2E9E4', tuft: '#7F5539', owl: '#B08968', belly: '#E6CCB2', scallop: '#DDB892',
       wing: '#7F5539', disc: '#F2E9E4', eye: '#FFD166', pupil: '#0B132B', glint: '#FFFFFF', beak: '#F6AE2D', branch: '#6B3E2E', leaf: '#588157', toe: '#F6AE2D',
     },

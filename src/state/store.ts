@@ -1,7 +1,8 @@
 import { create } from 'zustand';
 import type { Artwork, Doc, Op } from '../storage/db';
 import { loadArtwork, loadMeta, newArtworkId, saveMeta } from '../storage/db';
-import { PAGE_BY_ID } from '../pages';
+import { loadPage } from '../pages/catalog';
+import type { Page } from '../pages/types';
 import type { Palette } from '../palettes/palettes';
 
 export type Tool = 'fill' | 'brush' | 'eraser' | 'picker';
@@ -19,6 +20,8 @@ export interface Settings {
   lastSound: 'rain' | 'ocean' | 'lofi';
   /** soft paper grain over the colours */
   paper: boolean;
+  /** colour of the outlines */
+  ink: 'ink' | 'brown' | 'grey';
 }
 
 const EMPTY: Doc = { fills: {}, strokes: [] };
@@ -26,6 +29,8 @@ const EMPTY: Doc = { fills: {}, strokes: [] };
 interface State {
   screen: 'gallery' | 'color';
   pageId: string | null;
+  /** the full page being coloured (loaded on open) */
+  page: Page | null;
   artworkId: string | null;
   /** the artwork's details other than doc/time/status (which live below) */
   art: Artwork | null;
@@ -66,7 +71,7 @@ interface State {
   finish: () => void;
 
   openArtwork: (id: string) => Promise<void>;
-  newArtwork: (pageId: string, mode?: Artwork['mode']) => void;
+  newArtwork: (pageId: string, mode?: Artwork['mode']) => Promise<void>;
   /** open the most recent artwork of a page, or start one */
   openPage: (pageId: string) => Promise<void>;
   goGallery: () => void;
@@ -114,6 +119,7 @@ export const useStore = create<State>((set, get) => {
   return {
     screen: 'gallery',
     pageId: null,
+    page: null,
     artworkId: null,
     art: null,
     doc: EMPTY,
@@ -138,7 +144,7 @@ export const useStore = create<State>((set, get) => {
     paletteId: 'sunset',
     recents: [],
     myPalettes: [],
-    settings: { panelSide: 'right', theme: 'auto', fingerFill: true, volume: 0.5, lastSound: 'rain', paper: true },
+    settings: { panelSide: 'right', theme: 'auto', fingerFill: true, volume: 0.5, lastSound: 'rain', paper: true, ink: 'ink' },
     sound: 'off',
     showInspiration: false,
     penSeen: false,
@@ -149,13 +155,15 @@ export const useStore = create<State>((set, get) => {
     async openArtwork(id) {
       set({ loaded: false, screen: 'color', past: [], future: [] });
       const a = await loadArtwork(id);
-      if (!a || !PAGE_BY_ID[a.pageId]) {
+      const page = a ? await loadPage(a.pageId).catch(() => null) : null;
+      if (!a || !page) {
         set({ screen: 'gallery' });
         return;
       }
       set({
         artworkId: a.id,
         pageId: a.pageId,
+        page,
         art: a,
         doc: a.doc,
         log: a.log ?? [],
@@ -167,19 +175,23 @@ export const useStore = create<State>((set, get) => {
       });
       saveMeta('lastArtwork', id);
     },
-    newArtwork(pageId, mode = 'free') {
-      const page = PAGE_BY_ID[pageId];
-      if (!page) return;
+    async newArtwork(pageId, mode = 'free') {
+      set({ loaded: false, screen: 'color' });
+      const page = await loadPage(pageId).catch(() => null);
+      if (!page) {
+        set({ screen: 'gallery' });
+        return;
+      }
       const now = Date.now();
       const doc: Doc = { fills: mode === 'free' ? { ...(page.preFill ?? {}) } : {}, strokes: [] };
       const art: Artwork = { id: newArtworkId(), pageId, doc, timeMs: 0, status: 'in-progress', mode, favourite: false, albums: [], log: [], createdAt: now, updatedAt: now };
-      set({ screen: 'color', artworkId: art.id, pageId, art, doc, log: [], past: [], future: [], timeMs: 0, status: 'in-progress', loaded: true, showInspiration: false, mirror: false });
+      set({ screen: 'color', artworkId: art.id, pageId, page, art, doc, log: [], past: [], future: [], timeMs: 0, status: 'in-progress', loaded: true, showInspiration: false, mirror: false });
     },
     async openPage(pageId) {
       const { loadAllArtworks } = await import('../storage/db');
       const mine = (await loadAllArtworks()).filter((a) => a.pageId === pageId);
       if (mine.length) await get().openArtwork(mine[0].id);
-      else get().newArtwork(pageId);
+      else await get().newArtwork(pageId);
     },
     goGallery() {
       set({ screen: 'gallery', focus: false });
@@ -208,8 +220,7 @@ export const useStore = create<State>((set, get) => {
       record(doc, next);
     },
     restart() {
-      const { pageId, art } = get();
-      const page = pageId ? PAGE_BY_ID[pageId] : null;
+      const { page, art } = get();
       if (!page) return;
       get().commit({ fills: art?.mode === 'number' ? {} : { ...(page.preFill ?? {}) }, strokes: [] });
       set({ status: 'in-progress', timeMs: 0 });

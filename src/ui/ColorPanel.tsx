@@ -2,7 +2,6 @@ import { useMemo, useRef, useState } from 'react';
 import { PALETTES, type Palette } from '../palettes/palettes';
 import { harmonies, paletteFromImage } from '../palettes/harmony';
 import { useStore, savePrefs } from '../state/store';
-import { PAGE_BY_ID } from '../pages';
 import { Icon } from './Icon';
 
 export function ColorPanel() {
@@ -10,7 +9,7 @@ export function ColorPanel() {
   const paletteId = useStore((s) => s.paletteId);
   const recents = useStore((s) => s.recents);
   const myPalettes = useStore((s) => s.myPalettes);
-  const pageId = useStore((s) => s.pageId);
+  const page = useStore((s) => s.page);
   const set = useStore((s) => s.set);
   const [editing, setEditing] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -18,11 +17,10 @@ export function ColorPanel() {
 
   // the page's own palette, taken from its colour idea
   const pagePalette: Palette | null = useMemo(() => {
-    const page = pageId ? PAGE_BY_ID[pageId] : null;
     if (!page) return null;
     const colors = [...new Set(Object.values(page.inspiration).filter((c) => c.startsWith('#')).map((c) => c.toUpperCase()))].slice(0, 16);
     return { id: 'page', name: 'This page', colors };
-  }, [pageId]);
+  }, [page]);
 
   const all: Palette[] = [...(pagePalette ? [pagePalette] : []), ...PALETTES, ...myPalettes];
   const palette = all.find((p) => p.id === paletteId) ?? all[0];

@@ -1,3 +1,4 @@
+import { extendPage, othersThan, regionD, scatter, woodGrain } from './details';
 import { circle, ellipse, petalRing, rect, ribbon, sectorRing, polar, type Pt } from './geometry';
 import { layeredPage } from './define';
 import { Layers, curve, petal, polyD, shape, smooth, S } from './shapes';
@@ -70,7 +71,7 @@ export const adireSquares = layeredPage({ id: 'adire-squares', title: 'Adire Ind
 });
 
 // ---------------- Ankara medallions ----------------
-export const ankaraRhythm = layeredPage({ id: 'ankara-rhythm', title: 'Ankara Rhythm', category: 'African-inspired', difficulty: 'detailed' }, () => {
+export const ankaraRhythm = layeredPage({ id: 'ankara-rhythm', title: 'Ankara Rhythm', category: 'African-inspired', difficulty: 'detailed', crisp: true }, () => {
   const L = new Layers();
   L.add('bg', rect(0, 0, 1000, 1000), [130, 500]);
   const medallion = (cx: number, cy: number, R: number, k: string) => {
@@ -95,7 +96,7 @@ export const ankaraRhythm = layeredPage({ id: 'ankara-rhythm', title: 'Ankara Rh
 });
 
 // ---------------- Woman in a headwrap ----------------
-export const headwrap = layeredPage({ id: 'headwrap', title: 'Woman in a Headwrap', category: 'African-inspired', difficulty: 'medium' }, () => {
+export const headwrap = layeredPage({ id: 'headwrap', title: 'Woman in a Headwrap', category: 'African-inspired', difficulty: 'medium', h: 1333 }, () => {
   const L = new Layers();
   L.add('bg', rect(0, 0, 1000, 1000), [40, 40]);
   [430, 360, 290].forEach((r, i) => L.add(`halo${i}`, circle(470, 470, r), [470, 470 - r + 30]));
@@ -149,9 +150,20 @@ export const headwrap = layeredPage({ id: 'headwrap', title: 'Woman in a Headwra
   L.line(curve([[611, 451], [612, 463]]), skin);
   L.line(curve([[578, 420], [600, 412], [624, 418]]), skin);
   L.line(curve([[476, 512], [470, 530], [480, 548]]));
+  // tall page: the garment continues with woven bands
+  extendPage(L, 'bottom', 333);
+  const gown = regionD(L, 'garment1');
+  for (let k = 0; k < 4; k++) {
+    const y = 1040 + k * 70;
+    L.add(k % 2 ? 'bandB' : 'bandA', intersect(rect(0, y, 1000, 34), gown), [500, y + 17]);
+    for (let i = 0; i < 12; i++) {
+      const x = 130 + i * 64 + (k % 2) * 32;
+      L.add('weave', intersect(polyD([[x, y + 4], [x + 13, y + 17], [x, y + 30], [x - 13, y + 17]]), gown));
+    }
+  }
   return {
     layers: L,
-    inspiration: {
+    inspiration: { bandA: '#E9C46A', bandB: '#264653', weave: ['#E76F51', '#F2CC8F'],
       bg: '#FAEDCD', halo0: '#F4D6CC', halo1: '#FFE29A', halo2: '#F6AE2D', haloDot: '#E07A5F', skin: '#8D5524', ear: '#7F4A1F', hoop: '#F6AE2D',
       garment: '#2A9D8F', trim: '#E9C46A', bead: ['#E76F51', '#E9C46A'], wrap: '#C8553D', fold: '#E9C46A', wrapDot: '#264653', knot: '#9E2A2B', knotC: '#E9C46A',
     },
@@ -205,9 +217,11 @@ export const calabash = layeredPage({ id: 'calabash', title: 'Patterned Calabash
     const x = 285 + k * 72;
     L.add('lf', intersect(petal(x - 30, ly(x), 0, 0, 62, 15, 0.5), body));
   }
+  scatter(L, { within: regionD(L, 'wall1'), avoid: othersThan(L, 'wall1'), motifs: ['clover', 'dot', 'sparkle'], spacing: 90, size: [10, 15], seed: 36, after: 'wall1' });
+  woodGrain(L, 'floor1', 0, 700, 1000, 1000, 37);
   return {
     layers: L,
-    inspiration: {
+    inspiration: { motif: ['#E9C46A', '#F4A261', '#2A9D8F'], motifC: '#9C4221',
       wall: '#FAEDCD', floor: '#D4A373', mat: '#E9C46A', mat2: '#D9A441', mat3: '#F2CC8F', rimBack: '#8D5524', inside: '#5B3A1E',
       fruit: ['#F4A261', '#E76F51', '#F6AE2D'], leafy: '#588157', body: '#D9A441', zig: '#9C4221', band: '#264653', ring: '#9C4221', ringC: '#F2CC8F', lf: '#2A9D8F',
     },

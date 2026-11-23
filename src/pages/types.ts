@@ -42,8 +42,26 @@ export interface Page {
   inspiration: Record<string, string>;
   /** rotational (n copies) and/or left-right mirror symmetry, used by the mirror brush */
   symmetry?: { cx: number; cy: number; n: number; flip?: boolean };
+  /** bold silhouette outlines drawn over the fine region lines (made at build time) */
+  contours?: string[];
+  /** keep lines geometric (no hand-drawn wobble) — mandalas and tiles */
+  crisp?: boolean;
   /** drawn as overlapping layers and flattened (ahead of time) */
   layered?: boolean;
 }
 
 export type Decor = string | { d: string; clip?: string };
+
+/** Light page info shipped in the app's catalogue (the full page loads on open). */
+export interface PageMeta {
+  id: string;
+  title: string;
+  category: Category;
+  difficulty: Difficulty;
+  w: number;
+  h: number;
+  symmetry?: Page['symmetry'];
+  /** comes partly coloured ("started for you") */
+  started: boolean;
+  regionCount: number;
+}

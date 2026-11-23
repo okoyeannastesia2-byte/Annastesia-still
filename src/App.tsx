@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useStore } from './state/store';
-import { PAGE_BY_ID } from './pages';
 import { ColoringCanvas } from './canvas/ColoringCanvas';
 import { ColorPanel } from './ui/ColorPanel';
 import { Toolbar } from './ui/Toolbar';
@@ -9,6 +8,7 @@ import { ExportSheet, SettingsSheet } from './ui/Sheets';
 import { FinishedSheet, FocusDot, SoundSheet } from './ui/Calm';
 import { pageSVG, svgDataUrl, thumbnail } from './canvas/render';
 import { saveArtwork } from './storage/db';
+import type { Page } from './pages/types';
 
 export default function App() {
   const screen = useStore((s) => s.screen);
@@ -21,21 +21,21 @@ export default function App() {
 }
 
 function ColoringScreen() {
-  const pageId = useStore((s) => s.pageId);
+  const page = useStore((s) => s.page);
+  const artworkId = useStore((s) => s.artworkId);
   const loaded = useStore((s) => s.loaded);
   const side = useStore((s) => s.settings.panelSide);
   const showInspiration = useStore((s) => s.showInspiration);
   const focus = useStore((s) => s.focus);
   const [sheet, setSheet] = useState<'settings' | 'export' | 'sound' | 'finished' | null>(null);
-  const page = pageId ? PAGE_BY_ID[pageId] : null;
-  if (!page) return null;
+  if (!page) return <div className="loading">Opening…</div>;
   return (
     <div className={`color-screen panel-${side}${focus ? ' focus' : ''}`}>
       {!focus && <ColorPanel />}
       <main className="stage">
-        {loaded ? <ColoringCanvas key={page.id} page={page} /> : <div className="loading">Opening…</div>}
+        {loaded ? <ColoringCanvas key={page.id + (artworkId ?? '')} page={page} /> : <div className="loading">Opening…</div>}
         {!focus && <Toolbar onExport={() => setSheet('export')} onSettings={() => setSheet('settings')} onSound={() => setSheet('sound')} />}
-        {!focus && showInspiration && <Inspiration pageId={page.id} />}
+        {!focus && showInspiration && <Inspiration page={page} />}
         {focus && <FocusDot />}
       </main>
       {sheet === 'settings' && (
@@ -54,8 +54,7 @@ function ColoringScreen() {
   );
 }
 
-function Inspiration({ pageId }: { pageId: string }) {
-  const page = PAGE_BY_ID[pageId];
+function Inspiration({ page }: { page: Page }) {
   const src = useMemo(() => svgDataUrl(pageSVG(page, { fills: page.inspiration, strokes: [] }, 400, { lineW: 4 })), [page]);
   return (
     <div className="inspiration" onClick={() => useStore.getState().set({ showInspiration: false })}>
@@ -87,8 +86,8 @@ function useAutoSave() {
     const flush = () => {
       window.clearTimeout(timer.current);
       const s = useStore.getState();
-      if (!s.pageId || !s.loaded || !s.art) return;
-      const page = PAGE_BY_ID[s.pageId];
+      const page = s.page;
+      if (!page || !s.loaded || !s.art) return;
       if (thumbCache.current?.doc !== s.doc) thumbCache.current = { doc: s.doc, url: thumbnail(page, s.doc) };
       const art = { ...s.art, doc: s.doc, timeMs: s.timeMs, status: s.status, log: s.log, updatedAt: Date.now(), thumb: thumbCache.current.url };
       useStore.setState({ art });

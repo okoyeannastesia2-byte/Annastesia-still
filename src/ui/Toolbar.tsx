@@ -1,7 +1,6 @@
 import { useStore, savePrefs, type Tool, type FillStyle } from '../state/store';
 import { BRUSHES } from '../canvas/brush';
 import { PATTERNS, fillAttr, fillDefs, makeFill, softTint } from '../canvas/fills';
-import { PAGE_BY_ID } from '../pages';
 import { Icon } from './Icon';
 
 export function Toolbar({ onExport, onSettings, onSound }: { onExport: () => void; onSettings: () => void; onSound: () => void }) {
@@ -58,7 +57,7 @@ function Toggle({ on, label, onClick }: { on: boolean; label: string; onClick: (
 
 function ToolOptions() {
   const s = useStore();
-  const page = s.pageId ? PAGE_BY_ID[s.pageId] : null;
+  const page = s.page;
   const symmetric = !!page?.symmetry;
   const set = (p: Parameters<typeof s.set>[0]) => {
     s.set(p);

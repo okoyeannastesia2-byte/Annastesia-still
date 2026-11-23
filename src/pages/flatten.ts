@@ -152,7 +152,7 @@ export function toGeom(d: string): MultiPolygon {
 }
 
 const r2 = (v: number) => Math.round(v * 10) / 10;
-function simplify(pts: P[], tol = 0.25): P[] {
+export function simplify(pts: P[], tol = 0.25): P[] {
   if (pts.length < 4) return pts;
   const keep = new Uint8Array(pts.length);
   keep[0] = keep[pts.length - 1] = 1;
@@ -180,11 +180,32 @@ function simplify(pts: P[], tol = 0.25): P[] {
   }
   return pts.filter((_, i) => keep[i]);
 }
+/** Simplify a closed ring: split it at the point farthest from the start so neither half is degenerate. */
+export function simplifyClosed(pts: P[], tol = 0.25): P[] {
+  let ring = pts;
+  const a = ring[0];
+  const z = ring[ring.length - 1];
+  if (ring.length > 1 && a[0] === z[0] && a[1] === z[1]) ring = ring.slice(0, -1);
+  if (ring.length < 4) return ring;
+  let k = 0;
+  let best = -1;
+  ring.forEach((p, i) => {
+    const d = (p[0] - ring[0][0]) ** 2 + (p[1] - ring[0][1]) ** 2;
+    if (d > best) {
+      best = d;
+      k = i;
+    }
+  });
+  const first = simplify(ring.slice(0, k + 1), tol);
+  const second = simplify([...ring.slice(k), ring[0]], tol);
+  return [...first, ...second.slice(1, -1)];
+}
+
 export function toPath(g: MultiPolygon): string {
   let d = '';
   for (const poly of g) {
     for (const ring of poly) {
-      const pts = simplify(ring.slice(0, -1) as P[]);
+      const pts = simplifyClosed(ring.slice(0, -1) as P[]);
       if (pts.length < 3) continue;
       d += 'M' + pts.map((p) => `${r2(p[0])} ${r2(p[1])}`).join('L') + 'Z';
     }
@@ -272,7 +293,7 @@ function bbox(g: MultiPolygon): Box {
 }
 const boxesOverlap = (a: Box, b: Box) => a[0] < b[2] && b[0] < a[2] && a[1] < b[3] && b[1] < a[3];
 
-function insideAny(g: MultiPolygon, p: [number, number]) {
+export function insideAny(g: MultiPolygon, p: [number, number]) {
   for (const poly of g) {
     let inside = false;
     poly.forEach((ring) => {

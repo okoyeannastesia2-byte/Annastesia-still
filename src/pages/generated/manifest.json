@@ -1,0 +1,309 @@
+[
+ {
+  "id": "mandala-bloom",
+  "title": "Simple Bloom",
+  "category": "Mandalas & geometric",
+  "difficulty": "easy",
+  "w": 1000,
+  "h": 1000,
+  "symmetry": {
+   "cx": 500,
+   "cy": 500,
+   "n": 6
+  },
+  "started": false,
+  "regionCount": 62
+ },
+ {
+  "id": "mandala-lotus",
+  "title": "Sunset Lotus Mandala",
+  "category": "Mandalas & geometric",
+  "difficulty": "detailed",
+  "w": 1000,
+  "h": 1000,
+  "symmetry": {
+   "cx": 500,
+   "cy": 500,
+   "n": 4
+  },
+  "started": true,
+  "regionCount": 314
+ },
+ {
+  "id": "mandala-ocean",
+  "title": "Ocean Star Mandala",
+  "category": "Mandalas & geometric",
+  "difficulty": "detailed",
+  "w": 1000,
+  "h": 1000,
+  "symmetry": {
+   "cx": 500,
+   "cy": 500,
+   "n": 3
+  },
+  "started": true,
+  "regionCount": 297
+ },
+ {
+  "id": "quiet-tiles",
+  "title": "Quiet Ribbons",
+  "category": "Mandalas & geometric",
+  "difficulty": "medium",
+  "w": 1000,
+  "h": 1000,
+  "started": false,
+  "regionCount": 87
+ },
+ {
+  "id": "hibiscus",
+  "title": "Hibiscus in Bloom",
+  "category": "Florals & botanicals",
+  "difficulty": "easy",
+  "w": 1000,
+  "h": 1000,
+  "started": false,
+  "regionCount": 30
+ },
+ {
+  "id": "sunflower",
+  "title": "Sunflower Morning",
+  "category": "Florals & botanicals",
+  "difficulty": "medium",
+  "w": 1000,
+  "h": 1000,
+  "started": false,
+  "regionCount": 107
+ },
+ {
+  "id": "tropical-leaves",
+  "title": "Tropical Leaves",
+  "category": "Florals & botanicals",
+  "difficulty": "medium",
+  "w": 1000,
+  "h": 1000,
+  "started": false,
+  "regionCount": 77
+ },
+ {
+  "id": "potted-plant",
+  "title": "Potted Plant",
+  "category": "Florals & botanicals",
+  "difficulty": "easy",
+  "w": 1000,
+  "h": 1333,
+  "started": false,
+  "regionCount": 97
+ },
+ {
+  "id": "adire-squares",
+  "title": "Adire Indigo Squares",
+  "category": "African-inspired",
+  "difficulty": "detailed",
+  "w": 1000,
+  "h": 1000,
+  "started": true,
+  "regionCount": 153
+ },
+ {
+  "id": "ankara-rhythm",
+  "title": "Ankara Rhythm",
+  "category": "African-inspired",
+  "difficulty": "detailed",
+  "w": 1000,
+  "h": 1000,
+  "started": false,
+  "regionCount": 498
+ },
+ {
+  "id": "headwrap",
+  "title": "Woman in a Headwrap",
+  "category": "African-inspired",
+  "difficulty": "medium",
+  "w": 1000,
+  "h": 1333,
+  "started": false,
+  "regionCount": 123
+ },
+ {
+  "id": "calabash",
+  "title": "Patterned Calabash",
+  "category": "African-inspired",
+  "difficulty": "medium",
+  "w": 1000,
+  "h": 1000,
+  "started": false,
+  "regionCount": 95
+ },
+ {
+  "id": "cafe-morning",
+  "title": "Café Morning",
+  "category": "Cozy scenes",
+  "difficulty": "medium",
+  "w": 1000,
+  "h": 1000,
+  "started": false,
+  "regionCount": 59
+ },
+ {
+  "id": "rainy-window",
+  "title": "Rain on the Window",
+  "category": "Cozy scenes",
+  "difficulty": "detailed",
+  "w": 1000,
+  "h": 1333,
+  "started": false,
+  "regionCount": 66
+ },
+ {
+  "id": "reading-nook",
+  "title": "The Reading Nook",
+  "category": "Cozy scenes",
+  "difficulty": "detailed",
+  "w": 1000,
+  "h": 1333,
+  "started": false,
+  "regionCount": 98
+ },
+ {
+  "id": "mountain-sunset",
+  "title": "Mountains at Sunset",
+  "category": "Nature & landscapes",
+  "difficulty": "medium",
+  "w": 1000,
+  "h": 1000,
+  "started": false,
+  "regionCount": 35
+ },
+ {
+  "id": "ocean-waves",
+  "title": "Ocean Waves",
+  "category": "Nature & landscapes",
+  "difficulty": "medium",
+  "w": 1000,
+  "h": 1000,
+  "started": false,
+  "regionCount": 123
+ },
+ {
+  "id": "palm-beach",
+  "title": "Palm Beach",
+  "category": "Nature & landscapes",
+  "difficulty": "medium",
+  "w": 1000,
+  "h": 1333,
+  "started": false,
+  "regionCount": 102
+ },
+ {
+  "id": "butterfly",
+  "title": "Garden Butterfly",
+  "category": "Animals",
+  "difficulty": "medium",
+  "w": 1000,
+  "h": 1000,
+  "symmetry": {
+   "cx": 500,
+   "cy": 500,
+   "n": 1,
+   "flip": true
+  },
+  "started": true,
+  "regionCount": 95
+ },
+ {
+  "id": "peacock-feather",
+  "title": "Peacock Feather",
+  "category": "Animals",
+  "difficulty": "detailed",
+  "w": 1000,
+  "h": 1000,
+  "started": false,
+  "regionCount": 121
+ },
+ {
+  "id": "sleeping-cat",
+  "title": "Sleeping Cat",
+  "category": "Animals",
+  "difficulty": "easy",
+  "w": 1000,
+  "h": 1000,
+  "started": false,
+  "regionCount": 71
+ },
+ {
+  "id": "koi-pond",
+  "title": "Koi Pond",
+  "category": "Animals",
+  "difficulty": "medium",
+  "w": 1000,
+  "h": 1000,
+  "started": false,
+  "regionCount": 60
+ },
+ {
+  "id": "moon-owl",
+  "title": "Owl Under the Moon",
+  "category": "Animals",
+  "difficulty": "detailed",
+  "w": 1000,
+  "h": 1000,
+  "symmetry": {
+   "cx": 500,
+   "cy": 500,
+   "n": 1,
+   "flip": true
+  },
+  "started": false,
+  "regionCount": 115
+ },
+ {
+  "id": "celestial",
+  "title": "Moon, Stars & Planets",
+  "category": "Night sky",
+  "difficulty": "medium",
+  "w": 1000,
+  "h": 1000,
+  "started": false,
+  "regionCount": 68
+ },
+ {
+  "id": "breathe",
+  "title": "Breathe",
+  "category": "Affirmations",
+  "difficulty": "medium",
+  "w": 1000,
+  "h": 1000,
+  "started": false,
+  "regionCount": 140
+ },
+ {
+  "id": "peace",
+  "title": "Peace",
+  "category": "Affirmations",
+  "difficulty": "easy",
+  "w": 1000,
+  "h": 1000,
+  "started": false,
+  "regionCount": 152
+ },
+ {
+  "id": "slow-down",
+  "title": "Slow Down",
+  "category": "Affirmations",
+  "difficulty": "medium",
+  "w": 1000,
+  "h": 1000,
+  "started": false,
+  "regionCount": 80
+ },
+ {
+  "id": "i-am-becoming",
+  "title": "I Am Becoming",
+  "category": "Affirmations",
+  "difficulty": "medium",
+  "w": 1000,
+  "h": 1000,
+  "started": false,
+  "regionCount": 136
+ }
+]

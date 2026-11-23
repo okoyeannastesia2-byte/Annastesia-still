@@ -1,3 +1,4 @@
+import { grassTufts, othersThan, regionD, scatter } from './details';
 import { circle, ellipse, leaf, petalRing, rect, ribbon, polar, type Pt } from './geometry';
 import { layeredPage } from './define';
 import { Layers, curve, hband, petal, polyD, shape, smooth, S, star } from './shapes';
@@ -42,9 +43,10 @@ export const celestial = layeredPage({ id: 'celestial', title: 'Moon, Stars & Pl
   // clouds at the bottom
   L.add('cloudB', cloudBand(880, 1), [500, 980]);
   L.add('cloudF', cloudBand(950, 4), [500, 995]);
+  scatter(L, { within: regionD(L, 'sky1'), avoid: othersThan(L, 'sky1'), motifs: ['star', 'dot', 'sparkle'], spacing: 86, size: [9, 15], seed: 31, after: 'sky1' });
   return {
     layers: L,
-    inspiration: {
+    inspiration: { motif: ['#FFD166', '#C3BEF7', '#F7F3E3'], motifC: '#FFD166',
       sky: '#1C2541', conStar: '#F7F3E3', star: '#FFD166', star2: '#C3BEF7', moon: '#F7F3E3', crater: '#F2E9E4', ringBack: '#C3BEF7', planet: '#7A6C9D', pBand: '#5BC0BE',
       ringFront: '#C3BEF7', planet2: '#F28F3B', crater2: '#E07A5F', cloudB: '#4B3F72', cloudF: '#3A506B',
     },
@@ -74,9 +76,10 @@ export const peace = layeredPage({ id: 'peace', title: 'Peace', category: 'Affir
   }
   addR(L, centred('PEACE', 420, 1.6, 'pe'));
   for (const [x, y] of [[330, 340], [500, 320], [670, 340], [330, 640], [500, 660], [670, 640]]) L.add('spark', sparkle(x, y, 22), [x, y]);
+  scatter(L, { within: regionD(L, 'bg1'), avoid: othersThan(L, 'bg1'), motifs: ['leaf', 'dot', 'flower'], spacing: 86, size: [9, 15], seed: 32, after: 'bg1' });
   return {
     layers: L,
-    inspiration: {
+    inspiration: { motif: ['#FFE29A', '#FFD6E0', '#B5EAD7', '#C7CEEA', '#FFDAC1'], motifC: ['#F6AE2D', '#E5989B', '#81B29A'],
       bg: '#E2F0CB', cornerP: '#B5EAD7', cornerV: '#FFEFCF', oval: '#FFEFCF', leafW: '#81B29A', flower: '#FFD6E0', flowerC: '#FFC857', letter: ['#C7CEEA', '#B5EAD7', '#FFD6E0', '#FFDAC1', '#E8D3FF'], hole: '#FFEFCF', spark: '#F6AE2D',
     },
   };
@@ -106,9 +109,11 @@ export const slowDown = layeredPage({ id: 'slow-down', title: 'Slow Down', categ
     for (let k = 0; k < 5; k++) L.add('daisy', petal(x, y, (k * 2 * Math.PI) / 5, 6, 30, 12, 0.9));
     L.dot('daisyC', x, y, 8);
   }
+  grassTufts(L, 'hill01', (x) => 720 - 30 * Math.sin(x / 170), 0, 1000, 8);
+  scatter(L, { within: regionD(L, 'sky1'), avoid: othersThan(L, 'sky1'), motifs: ['dot', 'sparkle'], spacing: 100, size: [8, 13], seed: 33, after: 'sky1' });
   return {
     layers: L,
-    inspiration: {
+    inspiration: { motif: ['#FFE29A', '#FFD6E0', '#B5EAD7', '#C7CEEA', '#FFDAC1'], motifC: ['#F6AE2D', '#E5989B', '#81B29A'],
       sky: '#D4F1F4', ray: '#FFC857', rayV: '#FFF3B0', sunC: '#F6AE2D', cloud: '#FFFFFF', letter: ['#355070', '#6D597A', '#B56576', '#E56B6F'], hole: '#D4F1F4',
       hill0: '#CCD5AE', hill1: '#A3B18A', hill2: '#8A9A5B', hill3: '#588157', snailBody: '#E6CCB2', snailTip: '#7F5539', shell: '#D4A373', shellSpiral: '#9C4221', daisy: '#FFFFFF', daisyC: '#FFC857',
     },
@@ -132,9 +137,10 @@ export const becoming = layeredPage({ id: 'i-am-becoming', title: 'I Am Becoming
   L.add('pot', polyD([[400, 880], [600, 880], [570, 1000], [430, 1000]]), [500, 950]);
   L.add('potRim', rect(385, 860, 230, 36), [500, 878]);
   for (const [x, y] of [[150, 650], [850, 720], [120, 860], [880, 900], [140, 560], [870, 590]]) L.add('spark', sparkle(x, y, 26), [x, y]);
+  scatter(L, { within: regionD(L, 'bg1'), avoid: othersThan(L, 'bg1'), motifs: ['sparkle', 'dot', 'leaf'], spacing: 86, size: [9, 15], seed: 34, after: 'bg1' });
   return {
     layers: L,
-    inspiration: {
+    inspiration: { motif: ['#FFE29A', '#FFD6E0', '#B5EAD7', '#C7CEEA', '#FFDAC1'], motifC: ['#F6AE2D', '#E5989B', '#81B29A'],
       bg: '#FAEDCD', sunA: '#F6AE2D', sunAv: '#FFE29A', sunB: '#F28F3B', sunBv: '#FFF3B0', sunCore: '#E07A5F', letter: '#9E2A2B', letter2: ['#E07A5F', '#F28F3B', '#F6AE2D', '#8A9A5B', '#588157', '#2A9D8F', '#3D5A80', '#6D597A'], hole: '#FAEDCD',
       stem: '#588157', sprout: '#8A9A5B', sprout2: '#588157', bud: '#E5989B', pot: '#C8553D', potRim: '#9E2A2B', spark: '#F6AE2D',
     },
